@@ -27,6 +27,9 @@ BEGIN_MESSAGE_MAP(CTetrisView, CView)
 	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CView::OnFilePrintPreview)
+	ON_WM_CREATE()
+	ON_BN_CLICKED(101, &CTetrisView::OnStartBtnClicked)
+	ON_BN_CLICKED(102, &CTetrisView::OnExitBtnClicked)
 END_MESSAGE_MAP()
 
 // CTetrisView 생성/소멸
@@ -57,6 +60,30 @@ void CTetrisView::OnDraw(CDC* /*pDC*/)
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
+
+	CClientDC dc(this);
+	CPen pen, * curpen;
+	pen.CreatePen(PS_SOLID, 3, RGB(0, 0, 0));
+	curpen = dc.SelectObject(&pen);
+	// 게임 보드 구분 세로선(게임보드 픽셀 185~685)
+	dc.MoveTo(182, 0);
+	dc.LineTo(182, 1000);
+	dc.MoveTo(588, 0);
+	dc.LineTo(588, 1000);
+	// 다음 블록 표시 칸
+	dc.Rectangle(10, 40, 168, 198);
+	dc.TextOutW(50, 20, _T("NEXT BRICK"));
+	// 점수판 칸
+	dc.Rectangle(10, 233, 168, 295);
+	dc.TextOutW(65, 210, _T("SCORE"));
+	// 타이머 칸
+	dc.Rectangle(600, 100, 775, 160);
+	dc.TextOutW(672, 78, _T("TIMER"));
+
+	CPen pen2;
+	pen2.CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
+	curpen = dc.SelectObject(&pen2);
+	dc.Rectangle(185, 0, 225, 40);
 
 	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
 }
@@ -103,3 +130,50 @@ CTetrisDoc* CTetrisView::GetDocument() const // 디버그되지 않은 버전은
 
 
 // CTetrisView 메시지 처리기
+
+int CTetrisView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CView::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	// TODO:  여기에 특수화된 작성 코드를 추가합니다.
+
+	mGameStartBtn.Create(_T("Game Start"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+		CRect(240, 400, 540, 500), this, 101);
+	mExitBtn.Create(_T("Exit"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+		CRect(240, 520, 540, 620), this, 102);
+	mPauseBtn.Create(_T("||"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+		CRect(720, 10, 770, 60), this, 103);
+	mResumeBtn.Create(_T("Resume"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+		CRect(240, 400, 540, 500), this, 104);
+	mResetBtn.Create(_T("Reset"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+		CRect(240, 400, 540, 500), this, 105);
+
+	GetDlgItem(104)->ShowWindow(SW_HIDE);
+	GetDlgItem(105)->ShowWindow(SW_HIDE);
+	GetDlgItem(104)->EnableWindow(FALSE);
+	GetDlgItem(105)->EnableWindow(FALSE);
+
+	return 0;
+}
+
+void CTetrisView::OnStartBtnClicked()
+{
+	// TODO: 여기에 구현 코드 추가.
+
+	GetDlgItem(101)->ShowWindow(SW_HIDE);
+	GetDlgItem(102)->ShowWindow(SW_HIDE);
+	GetDlgItem(101)->EnableWindow(FALSE);
+	GetDlgItem(102)->EnableWindow(FALSE);
+	Sleep(1000);
+	GetDlgItem(104)->ShowWindow(SW_SHOWNORMAL);
+	GetDlgItem(102)->ShowWindow(SW_SHOWNORMAL);
+	GetDlgItem(104)->EnableWindow(TRUE);
+	GetDlgItem(102)->EnableWindow(TRUE);
+}
+
+void CTetrisView::OnExitBtnClicked()
+{
+	// TODO: 여기에 구현 코드 추가.
+	AfxGetMainWnd()->PostMessage(WM_CLOSE);
+}
