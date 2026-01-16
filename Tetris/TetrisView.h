@@ -14,100 +14,102 @@ protected: // serialization에서만 만들어집니다.
 // 특성입니다.
 public:
 	CTetrisDoc* GetDocument() const;
+	
+	CButton mGameStartBtn;
+	CButton mExitBtn;
+	CButton mPauseBtn;
+	CButton mResumeBtn;
+	CButton mResetBtn;
 
 // 작업입니다.
 public:
-		
-		//한칸 = 40x40픽셀
-		
-		// * * * *
-		// * * * *
-		// # @ # #
-		// * * * *
-		// Block_Type_0
-		int Block_Type_0[4][4] = {
-			0, 0, 0, 0, 
-			0, 0, 0, 0, 
-			1, 1, 1, 1, 
-			0, 0, 0, 0
-		};
 
-		// * * * *
-		// * # # *
-		// * # # *
-		// * * * *
-		// Block_Type_1
-		int Block_Type_1[4][4] = {
-			0, 0, 0, 0,
-			0, 1, 1, 0,
-			0, 1, 1, 0,
-			0, 0, 0, 0
-		};
+	//한칸 = 40x40픽셀
 
-		// Block_Type_2
-		// * * * *
-		// * # * *
-		// # @ # *
-		// * * * *
-		int Block_Type_2[4][4] = {
-			0, 0, 0, 0,
-			0, 1, 0, 0,
-			1, 1, 1, 0,
-			0, 0, 0, 0
-		};
+	// * * * *
+	// * * * *
+	// # @ # #
+	// * * * *
+	// Block_Type_0
+	int Block_Type_0[4][4] = {
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		1, 1, 1, 1,
+		0, 0, 0, 0
+	};
 
-		// * * * *
-		// # * * *
-		// # @ # *
-		// * * * *
-		// Block_Type_3
-		int Block_Type_3[4][4] = {
-			0, 0, 0, 0,
-			1, 0, 0, 0,
-			1, 1, 1, 0,
-			0, 0, 0, 0
-		};
+	// * * * *
+	// * # # *
+	// * # # *
+	// * * * *
+	// Block_Type_1
+	int Block_Type_1[4][4] = {
+		0, 0, 0, 0,
+		0, 1, 1, 0,
+		0, 1, 1, 0,
+		0, 0, 0, 0
+	};
 
-		// * * * *
-		// * * # *
-		// # @ # *
-		// * * * *
-		// Block_Type_4
-		int Block_Type_4[4][4] = {
-			0, 0, 0, 0,
-			0, 0, 1, 0,
-			1, 1, 1, 0,
-			0, 0, 0, 0
-		};
+	// Block_Type_2
+	// * * * *
+	// * # * *
+	// # @ # *
+	// * * * *
+	int Block_Type_2[4][4] = {
+		0, 0, 0, 0,
+		0, 1, 0, 0,
+		1, 1, 1, 0,
+		0, 0, 0, 0
+	};
 
-		// * * * *
-		// * # # *
-		// # @ * *
-		// * * * *
-		// Block_Type_5
-		int Block_Type_5[4][4] = {
-			0, 0, 0, 0,
-			0, 1, 1, 0,
-			1, 1, 0, 0,
-			0, 0, 0, 0
-		};
+	// * * * *
+	// # * * *
+	// # @ # *
+	// * * * *
+	// Block_Type_3
+	int Block_Type_3[4][4] = {
+		0, 0, 0, 0,
+		1, 0, 0, 0,
+		1, 1, 1, 0,
+		0, 0, 0, 0
+	};
 
-		// * * * *
-		// # # * *
-		// * @ # *
-		// * * * *
-		// Block_Type_6
-		int Block_Type_6[4][4] = {
-			0, 0, 0, 0,
-			1, 1, 0, 0,
-			0, 1, 1, 0,
-			0, 0, 0, 0
-		};
+	// * * * *
+	// * * # *
+	// # @ # *
+	// * * * *
+	// Block_Type_4
+	int Block_Type_4[4][4] = {
+		0, 0, 0, 0,
+		0, 0, 1, 0,
+		1, 1, 1, 0,
+		0, 0, 0, 0
+	};
 
+	// * * * *
+	// * # # *
+	// # @ * *
+	// * * * *
+	// Block_Type_5
+	int Block_Type_5[4][4] = {
+		0, 0, 0, 0,
+		0, 1, 1, 0,
+		1, 1, 0, 0,
+		0, 0, 0, 0
+	};
 
-
-
-
+	// * * * *
+	// # # * *
+	// * @ # *
+	// * * * *
+	// Block_Type_6
+	int Block_Type_6[4][4] = {
+		0, 0, 0, 0,
+		1, 1, 0, 0,
+		0, 1, 1, 0,
+		0, 0, 0, 0
+	};
+	
 // 재정의입니다.
 public:
 	virtual void OnDraw(CDC* pDC);  // 이 뷰를 그리기 위해 재정의되었습니다.
@@ -131,6 +133,10 @@ protected:
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
+	afx_msg void OnPaint();
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	void OnStartBtnClicked();
+	void OnExitBtnClicked();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 };
 
