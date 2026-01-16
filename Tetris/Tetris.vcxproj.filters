@@ -63,11 +63,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Tetris.rc2">
-      <Filter>리소스 파일</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="res\TetrisDoc.ico">
       <Filter>리소스 파일</Filter>
     </Image>
@@ -75,6 +70,9 @@
       <Filter>리소스 파일</Filter>
     </Image>
     <Image Include="res\Toolbar.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\toolbar1.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>

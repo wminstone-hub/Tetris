@@ -136,3 +136,9 @@ void CTetrisDoc::Dump(CDumpContext& dc) const
 
 
 // CTetrisDoc 명령
+
+int CTetrisDoc::myadd()
+{
+	// TODO: 여기에 구현 코드 추가.
+	return 0;
+}

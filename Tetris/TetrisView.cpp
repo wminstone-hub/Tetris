@@ -17,7 +17,6 @@
 #define new DEBUG_NEW
 #endif
 
-
 // CTetrisView
 
 IMPLEMENT_DYNCREATE(CTetrisView, CView)
@@ -27,6 +26,7 @@ BEGIN_MESSAGE_MAP(CTetrisView, CView)
 	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CView::OnFilePrintPreview)
+	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 // CTetrisView 생성/소멸
@@ -34,6 +34,11 @@ END_MESSAGE_MAP()
 CTetrisView::CTetrisView() noexcept
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
+	
+
+
+
+
 
 }
 
@@ -51,12 +56,41 @@ BOOL CTetrisView::PreCreateWindow(CREATESTRUCT& cs)
 
 // CTetrisView 그리기
 
-void CTetrisView::OnDraw(CDC* /*pDC*/)
+void CTetrisView::OnDraw(CDC* pDC)
 {
 	CTetrisDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
+	
+	pDoc->myadd();
+
+	CClientDC dc(this);
+	LOGBRUSH lb;
+
+	lb.lbStyle = BS_SOLID;
+	lb.lbColor = RGB(100, 100, 100);
+
+	CPen NewPen;
+	// 여기서 PS_JOIN_MITER가 추가 되었는데
+	// 이 외에도, ROUND, BEVEL이 존재.
+	NewPen.CreatePen(PS_GEOMETRIC | PS_ENDCAP_FLAT | PS_JOIN_MITER, 20, &lb);
+	CPen* pOldPen = dc.SelectObject(&NewPen);
+
+	CBrush NewBrush(RGB(0, 0, 192));
+	CBrush* pOldBrush = dc.SelectObject(&NewBrush);
+
+	// POINT 변수를 생성해 각각의 주소를 기억하게 한 후,
+	POINT arPt[5] = { {20, 20}, {140, 20}, {140, 140}, {70, 180}, {20, 140} };
+
+	POINT arPt[5] = {  };
+	Block_Type_1;
+	// Polygon 함수를 사용해 이전과 같이 도형을 그려 주고 있다.
+	dc.Polygon(arPt, 5);
+
+	dc.SelectObject(pOldBrush);
+	dc.SelectObject(pOldPen);
+
 
 	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
 }
@@ -103,3 +137,13 @@ CTetrisDoc* CTetrisView::GetDocument() const // 디버그되지 않은 버전은
 
 
 // CTetrisView 메시지 처리기
+
+void CTetrisView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+
+	CView::OnKeyDown(nChar, nRepCnt, nFlags);
+
+	// 상하좌우 키를 구분해 메시지를 출력합니다.
+
+}

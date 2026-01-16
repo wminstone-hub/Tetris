@@ -208,12 +208,10 @@
     <ResourceCompile Include="Tetris.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Tetris.rc2" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="res\Tetris.ico" />
     <Image Include="res\TetrisDoc.ico" />
     <Image Include="res\Toolbar.bmp" />
+    <Image Include="res\toolbar1.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
