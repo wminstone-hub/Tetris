@@ -8,7 +8,7 @@
 //게임보드 상수
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 20
-#define BRICK_SIZE 30	//픽셀 단위로 블록 한 칸 크기
+#define BRICK_SIZE 40	//픽셀 단위로 블록 한 칸 크기
 
 class CTetrisDoc : public CDocument
 {
