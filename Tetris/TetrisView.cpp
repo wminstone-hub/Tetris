@@ -64,39 +64,15 @@ void CTetrisView::OnDraw(CDC* pDC)
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
-	/*pDoc->myadd();
+	//pDoc->myadd();
 
-	CClientDC dc(this);
-	LOGBRUSH lb;
+	pDoc->Render(pDC);
 
-	lb.lbStyle = BS_SOLID;
-	lb.lbColor = RGB(100, 100, 100);
-
-	CPen NewPen;
-	// 여기서 PS_JOIN_MITER가 추가 되었는데
-	// 이 외에도, ROUND, BEVEL이 존재.
-	NewPen.CreatePen(PS_GEOMETRIC | PS_ENDCAP_FLAT | PS_JOIN_MITER, 20, &lb);
-	CPen* pOldPen = dc.SelectObject(&NewPen);
-
-	CBrush NewBrush(RGB(0, 0, 192));
-	CBrush* pOldBrush = dc.SelectObject(&NewBrush);
-
-	// POINT 변수를 생성해 각각의 주소를 기억하게 한 후,
-	POINT arPt[5] = { {20, 20}, {140, 20}, {140, 140}, {70, 180}, {20, 140} };
-
-	POINT arPt[5] = {  };
-	Block_Type_1;
-	// Polygon 함수를 사용해 이전과 같이 도형을 그려 주고 있다.
-	dc.Polygon(arPt, 5);
-
-	dc.SelectObject(pOldBrush);
-	dc.SelectObject(pOldPen);
-	*/
-
-	CClientDC dc(this);
+	/*
 	CPen pen, * curpen;
 	pen.CreatePen(PS_SOLID, 3, RGB(0, 0, 0));
 	curpen = dc.SelectObject(&pen);
+	//dc.SetBkMode(TRANSPARENT);
 	// 게임 보드 구분 세로선(게임보드 픽셀 185~685)
 	dc.MoveTo(182, 0);
 	dc.LineTo(182, 1000);
@@ -112,12 +88,18 @@ void CTetrisView::OnDraw(CDC* pDC)
 	dc.Rectangle(600, 100, 775, 160);
 	dc.TextOutW(672, 78, _T("TIMER"));
 
-	CPen pen2;
-	pen2.CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
-	curpen = dc.SelectObject(&pen2);
-	dc.Rectangle(185, 0, 225, 40);
-
 	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
+	/*
+	dc.FillSolidRect(
+		100, 200,
+		BLOCK_SIZE,
+		BLOCK_SIZE,
+		RGB(255, 5, 255)
+	);
+	CBrush brush(RGB(0, 0, 0));
+	CRect rect(100, 200, 140, 240);
+	FrameRect(dc ,&rect, brush);
+	*/
 }
 
 
