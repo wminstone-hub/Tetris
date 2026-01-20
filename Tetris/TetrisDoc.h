@@ -8,7 +8,7 @@
 //게임보드 상수
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 20
-#define BRICK_SIZE 40	//픽셀 단위로 블록 한 칸 크기
+#define BLOCK_SIZE 40	//픽셀 단위로 블록 한 칸 크기
 
 class CTetrisDoc : public CDocument
 {
@@ -17,15 +17,77 @@ protected: // serialization에서만 만들어집니다.
 	DECLARE_DYNCREATE(CTetrisDoc)
 
 // 멤버 변수입니다.
-protected:
+public:
 	int mBoard[BOARD_HEIGHT][BOARD_WIDTH]; // 게임 보드
-	int mBrickX, mBrickY;           // 현재 블록 위치
-	int mBrickType;                  // 현재 블록 종류
-	int mNextBrickType;              // 다음 블록 종류
+	int mBlockX, mBlockY;           // 현재 블록 위치
+	int mBlockType;                  // 현재 블록 종류
+	int mNextBlockType;              // 다음 블록 종류
 	int mCurrentRotation;          // 현재 블록 회전 상태
 	int mScore;                      // 점수
 	int mLevel;                      // 현재 레벨
 	int mGameStaus;                 // 게임 상태 (타이틀, 진행중, 일시정지, 게임오버)
+
+	//보드 색상 정의
+	const COLORREF boardColor = 0x00FFFFE3; // 아이보리
+
+	// 블록 색상 정의
+	const COLORREF blockColor1 = 0x00D1E0FC; // 하늘색
+	const COLORREF blockColor2 = 0x00FFD000; // 노란색
+	const COLORREF blockColor3 = 0x00462679; // 보라색
+	const COLORREF blockColor4 = 0x00ff7f00; // 주황색
+	const COLORREF blockColor5 = 0x0000CFFF; // 파란색
+	const COLORREF blockColor6 = 0x00FF0000; // 빨간색
+	const COLORREF blockColor7 = 0x0000FF00; // 초록색
+
+	// 블록 모양 정의 (4x4 매트릭스)
+	int Block_Type_1[4][4] = {
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		1, 1, 1, 1,
+		0, 0, 0, 0
+	};
+
+	int Block_Type_2[4][4] = {
+		0, 0, 0, 0,
+		0, 2, 2, 0,
+		0, 2, 2, 0,
+		0, 0, 0, 0
+	};
+
+	int Block_Type_3[4][4] = {
+		0, 0, 0, 0,
+		0, 3, 0, 0,
+		3, 3, 3, 0,
+		0, 0, 0, 0
+	};
+
+	int Block_Type_4[4][4] = {
+		0, 0, 0, 0,
+		4, 0, 0, 0,
+		4, 4, 4, 0,
+		0, 0, 0, 0
+	};
+
+	int Block_Type_5[4][4] = {
+		0, 0, 0, 0,
+		0, 0, 5, 0,
+		5, 5, 5, 0,
+		0, 0, 0, 0
+	};
+
+	int Block_Type_6[4][4] = {
+		0, 0, 0, 0,
+		0, 6, 6, 0,
+		6, 6, 0, 0,
+		0, 0, 0, 0
+	};
+
+	int Block_Type_7[4][4] = {
+		0, 0, 0, 0,
+		7, 7, 0, 0,
+		0, 7, 7, 0,
+		0, 0, 0, 0
+	};
 
 
 // 작업입니다.
