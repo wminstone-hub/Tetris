@@ -151,6 +151,7 @@ int CTetrisDoc::Render(CDC *pDC)
 	CPen pen(PS_SOLID, 1, RGB(0, 0, 0));
 	pDC->SelectObject(&brush);
 	pDC->SelectObject(&pen);
+
 	for (x = 0; x < BOARD_WIDTH; x++) {
 		for (y = 0; y < BOARD_HEIGHT; y++) {
 			pDC->Rectangle(
