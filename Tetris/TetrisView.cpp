@@ -30,6 +30,8 @@ BEGIN_MESSAGE_MAP(CTetrisView, CView)
 	ON_BN_CLICKED(101, &CTetrisView::OnStartBtnClicked)
 	ON_BN_CLICKED(102, &CTetrisView::OnExitBtnClicked)
 	ON_BN_CLICKED(103, &CTetrisView::OnPauseBtnClicked)
+	ON_BN_CLICKED(104, &CTetrisView::OnResumeBtnClicked)
+	ON_BN_CLICKED(105, &CTetrisView::OnRestartBtnClicked)
 END_MESSAGE_MAP()
 
 // CTetrisView 생성/소멸
@@ -199,7 +201,7 @@ int CTetrisView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		CRect(720, 10, 770, 60), this, 103);
 	mResumeBtn.Create(_T("Resume"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
 		CRect(240, 400, 540, 500), this, 104);
-	mResetBtn.Create(_T("Reset"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+	mRestartBtn.Create(_T("Restart"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
 		CRect(240, 400, 540, 500), this, 105);
 
 	GetDlgItem(103)->ShowWindow(SW_HIDE);
@@ -239,4 +241,19 @@ void CTetrisView::OnPauseBtnClicked()
 	GetDlgItem(102)->ShowWindow(SW_SHOWNORMAL);
 	GetDlgItem(104)->EnableWindow(TRUE);
 	GetDlgItem(102)->EnableWindow(TRUE);
+}
+
+void CTetrisView::OnResumeBtnClicked()
+{
+	// TODO: 여기에 구현 코드 추가.
+	GetDlgItem(104)->ShowWindow(SW_HIDE);
+	GetDlgItem(102)->ShowWindow(SW_HIDE);
+	GetDlgItem(104)->EnableWindow(FALSE);
+	GetDlgItem(102)->EnableWindow(FALSE);
+
+}
+
+void CTetrisView::OnRestartBtnClicked()
+{
+	// TODO: 여기에 구현 코드 추가.
 }

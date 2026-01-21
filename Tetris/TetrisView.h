@@ -19,7 +19,7 @@ public:
 	CButton mExitBtn;
 	CButton mPauseBtn;
 	CButton mResumeBtn;
-	CButton mResetBtn;
+	CButton mRestartBtn;
 
 // 작업입니다.
 public:
@@ -52,6 +52,8 @@ public:
 	void OnStartBtnClicked();
 	void OnExitBtnClicked();
 	void OnPauseBtnClicked();
+	void OnResumeBtnClicked();
+	void OnRestartBtnClicked();
 };
 
 #ifndef _DEBUG  // TetrisView.cpp의 디버그 버전
