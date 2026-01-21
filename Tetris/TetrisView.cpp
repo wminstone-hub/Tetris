@@ -30,6 +30,7 @@ BEGIN_MESSAGE_MAP(CTetrisView, CView)
 	ON_WM_CREATE()
 	ON_BN_CLICKED(101, &CTetrisView::OnStartBtnClicked)
 	ON_BN_CLICKED(102, &CTetrisView::OnExitBtnClicked)
+	ON_BN_CLICKED(103, &CTetrisView::OnPauseBtnClicked)
 END_MESSAGE_MAP()
 
 // CTetrisView 생성/소멸
@@ -86,7 +87,7 @@ void CTetrisView::OnDraw(CDC* pDC)
 	int rectStartY = 0;
 	int rectEndX = 225;
 	int rectEndY = 40;
-	CRect square(rectStartX, rectStartY, rectEndX, rectEndY);
+	CRect square(rectStartX+1, rectStartY+1, rectEndX-1, rectEndY-1);
 
 	pDC->SelectObject(pOldPen);
 
@@ -95,23 +96,22 @@ void CTetrisView::OnDraw(CDC* pDC)
 	pDC->SelectObject(&squarePen);
 	//보드 색상 브러시
 	CBrush NewBrush(pDoc->boardColor);
+	CBrush FloorBrush(0x00808080);
 	CBrush* pOldBrush = pDC->SelectObject(&NewBrush);
 
 	for (int  curHight = 0; curHight <= BOARD_HEIGHT; curHight++) {
 		for (int curWidth = 0; curWidth < BOARD_WIDTH; curWidth++) {
-			pDC->Rectangle(square);
-			if (curHight != BOARD_HEIGHT) {
-				
+			if (curHight == BOARD_HEIGHT) {
+				pDC->SelectObject(&FloorBrush);
 			}
+			pDC->Rectangle(rectStartX, rectStartY, rectEndX, rectEndY);
 			rectStartX += BLOCK_SIZE;
 			rectEndX += BLOCK_SIZE;
-			square.SetRect(rectStartX, rectStartY, rectEndX, rectEndY);
 		}
 		rectStartX = 185;
 		rectEndX = 225;
 		rectStartY += BLOCK_SIZE;
 		rectEndY += BLOCK_SIZE;
-		square.SetRect(rectStartX, rectStartY, rectEndX, rectEndY);
 	}
 
 	pDC->SelectObject(pOldPen);
@@ -185,8 +185,10 @@ int CTetrisView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	mResetBtn.Create(_T("Reset"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
 		CRect(240, 400, 540, 500), this, 105);
 
+	GetDlgItem(103)->ShowWindow(SW_HIDE);
 	GetDlgItem(104)->ShowWindow(SW_HIDE);
 	GetDlgItem(105)->ShowWindow(SW_HIDE);
+	GetDlgItem(103)->EnableWindow(FALSE);
 	GetDlgItem(104)->EnableWindow(FALSE);
 	GetDlgItem(105)->EnableWindow(FALSE);
 
@@ -199,17 +201,25 @@ void CTetrisView::OnStartBtnClicked()
 
 	GetDlgItem(101)->ShowWindow(SW_HIDE);
 	GetDlgItem(102)->ShowWindow(SW_HIDE);
+	GetDlgItem(103)->ShowWindow(SW_SHOWNORMAL);
 	GetDlgItem(101)->EnableWindow(FALSE);
 	GetDlgItem(102)->EnableWindow(FALSE);
-	Sleep(1000);
-	GetDlgItem(104)->ShowWindow(SW_SHOWNORMAL);
-	GetDlgItem(102)->ShowWindow(SW_SHOWNORMAL);
-	GetDlgItem(104)->EnableWindow(TRUE);
-	GetDlgItem(102)->EnableWindow(TRUE);
+	GetDlgItem(103)->EnableWindow(TRUE);
 }
 
 void CTetrisView::OnExitBtnClicked()
 {
 	// TODO: 여기에 구현 코드 추가.
+
 	AfxGetMainWnd()->PostMessage(WM_CLOSE);
+}
+
+void CTetrisView::OnPauseBtnClicked()
+{
+	// TODO: 여기에 구현 코드 추가.
+
+	GetDlgItem(104)->ShowWindow(SW_SHOWNORMAL);
+	GetDlgItem(102)->ShowWindow(SW_SHOWNORMAL);
+	GetDlgItem(104)->EnableWindow(TRUE);
+	GetDlgItem(102)->EnableWindow(TRUE);
 }

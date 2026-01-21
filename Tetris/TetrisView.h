@@ -51,6 +51,7 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	void OnStartBtnClicked();
 	void OnExitBtnClicked();
+	void OnPauseBtnClicked();
 };
 
 #ifndef _DEBUG  // TetrisView.cpp의 디버그 버전
