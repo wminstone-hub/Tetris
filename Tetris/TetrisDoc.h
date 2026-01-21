@@ -8,6 +8,8 @@
 //게임보드 상수
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 20
+#define WALL_WIDTH 2	//벽 두께
+#define FLOOR_HEIGHT 1 //바닥 두께
 #define BLOCK_SIZE 40	//픽셀 단위로 블록 한 칸 크기
 #define BOARD_HIEGHT_OFFSET 0 // 게임보드위치
 #define BOARD_WIDTH_OFFSET 185 // 게임보드위치
@@ -20,7 +22,6 @@ protected: // serialization에서만 만들어집니다.
 
 // 멤버 변수입니다.
 public:
-	int mBoard[BOARD_HEIGHT][BOARD_WIDTH] = {0, }; // 게임 보드
 	int mBlockX, mBlockY;		// 현재 블록 위치
 	int mTileX, mTileY;			// 타일 위치
 	int mBlockType;				// 현재 블록 종류
@@ -31,8 +32,8 @@ public:
 	int mGameStaus;             // 게임 상태 (타이틀, 진행중, 일시정지, 게임오버)
 
 	//보드 상태 표현 2차원 배열
-	int mCurBoardState[BOARD_HEIGHT][BOARD_WIDTH] = { 0, };
-	int mOldBoardState[BOARD_HEIGHT][BOARD_WIDTH] = { 0, };
+	int mCurBoardState[BOARD_HEIGHT + FLOOR_HEIGHT][BOARD_WIDTH + WALL_WIDTH] = { 0, };
+	int mOldBoardState[BOARD_HEIGHT + FLOOR_HEIGHT][BOARD_WIDTH + WALL_WIDTH] = { 0, };
 
 	//보드 색상 정의
 	const COLORREF boardColor = 0x00dce6ee; // 아이보리
