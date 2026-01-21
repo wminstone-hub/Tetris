@@ -22,7 +22,7 @@ protected: // serialization에서만 만들어집니다.
 public:
 	int mBoard[BOARD_HEIGHT][BOARD_WIDTH] = {0, }; // 게임 보드
 	int mBlockX, mBlockY;           // 현재 블록 위치
-	int x, y;						// 그리기 위치
+	int mTileX, mTileY;						// 그리기 위치
 	int mBlockType;                  // 현재 블록 종류
 	int mNextBlockType;              // 다음 블록 종류
 	int mCurrentRotation;          // 현재 블록 회전 상태
