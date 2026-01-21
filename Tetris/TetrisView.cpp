@@ -17,7 +17,6 @@
 #define new DEBUG_NEW
 #endif
 
-
 // CTetrisView
 
 IMPLEMENT_DYNCREATE(CTetrisView, CView)
@@ -38,6 +37,11 @@ END_MESSAGE_MAP()
 CTetrisView::CTetrisView() noexcept
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
+	
+
+
+
+
 
 }
 
