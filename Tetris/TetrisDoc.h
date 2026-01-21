@@ -9,6 +9,8 @@
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 20
 #define BLOCK_SIZE 40	//픽셀 단위로 블록 한 칸 크기
+#define BOARD_HIEGHT_OFFSET 0 // 게임보드위치
+#define BOARD_WIDTH_OFFSET 185 // 게임보드위치
 
 class CTetrisDoc : public CDocument
 {
@@ -18,8 +20,9 @@ protected: // serialization에서만 만들어집니다.
 
 // 멤버 변수입니다.
 public:
-	int mBoard[BOARD_HEIGHT][BOARD_WIDTH]; // 게임 보드
+	int mBoard[BOARD_HEIGHT][BOARD_WIDTH] = {0, }; // 게임 보드
 	int mBlockX, mBlockY;           // 현재 블록 위치
+	int x, y;						// 그리기 위치
 	int mBlockType;                  // 현재 블록 종류
 	int mNextBlockType;              // 다음 블록 종류
 	int mCurrentRotation;          // 현재 블록 회전 상태
@@ -122,4 +125,5 @@ protected:
 #endif // SHARED_HANDLERS
 public:
 	int myadd();
+	int Render(CDC *pDC);
 };

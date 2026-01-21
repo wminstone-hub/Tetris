@@ -142,3 +142,27 @@ int CTetrisDoc::myadd()
 	// TODO: 여기에 구현 코드 추가.
 	return 0;
 }
+
+int CTetrisDoc::Render(CDC *pDC)
+{
+	// TODO: 여기에 구현 코드 추가.
+	
+	CBrush brush(RGB(180, 180, 180));
+	CPen pen(PS_SOLID, 1, RGB(0, 0, 0));
+	pDC->SelectObject(&brush);
+	pDC->SelectObject(&pen);
+
+	for (x = 0; x < BOARD_WIDTH; x++) {
+		for (y = 0; y < BOARD_HEIGHT; y++) {
+			pDC->Rectangle(
+				BOARD_WIDTH_OFFSET + x * BLOCK_SIZE,
+				BOARD_HIEGHT_OFFSET + (y +1) * BLOCK_SIZE,
+				BOARD_WIDTH_OFFSET + (x +1) * BLOCK_SIZE,
+				BOARD_HIEGHT_OFFSET + y * BLOCK_SIZE
+			);
+		}
+	}
+	
+
+	return 0;
+}
