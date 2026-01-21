@@ -68,63 +68,7 @@ void CTetrisView::OnDraw(CDC* pDC)
 	if (!pDoc)
 		return;
 
-	//보드 외곽선 및 구분선 그리기 펜
-	CPen boardPen(PS_SOLID, 3, RGB(0, 0, 0));
-	CPen* pOldPen = pDC->SelectObject(&boardPen);
-	
-	pDC->SelectObject(&boardPen);
-	// 게임 보드 구분 세로선(게임보드 픽셀 185~685)
-	pDC->MoveTo(182, 0);
-	pDC->LineTo(182, 1000);
-	pDC->MoveTo(588, 0);
-	pDC->LineTo(588, 1000);
-	// 다음 블록 표시 칸
-	pDC->Rectangle(10, 40, 168, 198);
-	pDC->TextOutW(50, 20, _T("NEXT BRICK"));
-	// 점수판 칸
-	pDC->Rectangle(10, 233, 168, 295);
-	pDC->TextOutW(65, 210, _T("SCORE"));
-	// 타이머 칸
-	pDC->Rectangle(600, 100, 775, 160);
-	pDC->TextOutW(672, 78, _T("TIMER"));
-
-	//게임 보드 생성
-	int rectStartX = 185;
-	int rectStartY = 0;
-	int rectEndX = 225;
-	int rectEndY = 40;
-	CRect square(rectStartX+1, rectStartY+1, rectEndX-1, rectEndY-1);
-
-	pDC->SelectObject(pOldPen);
-
-	//한 칸 그리기 펜
-	CPen squarePen(PS_SOLID, 1, RGB(0, 0, 0));
-	pDC->SelectObject(&squarePen);
-	//보드 색상 브러시
-	CBrush NewBrush(pDoc->boardColor);
-	CBrush FloorBrush(0x00808080);
-	CBrush* pOldBrush = pDC->SelectObject(&NewBrush);
-
-	for (int  curHight = 0; curHight <= BOARD_HEIGHT; curHight++) {
-		for (int curWidth = 0; curWidth < BOARD_WIDTH; curWidth++) {
-			if (curHight == BOARD_HEIGHT) {
-				pDC->SelectObject(&FloorBrush);
-			}
-			pDC->Rectangle(rectStartX, rectStartY, rectEndX, rectEndY);
-			rectStartX += BLOCK_SIZE;
-			rectEndX += BLOCK_SIZE;
-		}
-		rectStartX = 185;
-		rectEndX = 225;
-		rectStartY += BLOCK_SIZE;
-		rectEndY += BLOCK_SIZE;
-	}
-
-	pDC->SelectObject(pOldPen);
-	pDC->SelectObject(pOldBrush);
-	DeleteObject(&boardPen);
-	DeleteObject(&squarePen);
-	DeleteObject(&NewBrush);
+	pDoc->OnCreateBoard(pDC);
 
 	//pDoc->Render(pDC);
 
