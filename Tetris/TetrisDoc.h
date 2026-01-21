@@ -21,26 +21,31 @@ protected: // serialization에서만 만들어집니다.
 // 멤버 변수입니다.
 public:
 	int mBoard[BOARD_HEIGHT][BOARD_WIDTH] = {0, }; // 게임 보드
-	int mBlockX, mBlockY;           // 현재 블록 위치
-	int mTileX, mTileY;						// 그리기 위치
-	int mBlockType;                  // 현재 블록 종류
-	int mNextBlockType;              // 다음 블록 종류
-	int mCurrentRotation;          // 현재 블록 회전 상태
-	int mScore;                      // 점수
-	int mLevel;                      // 현재 레벨
-	int mGameStaus;                 // 게임 상태 (타이틀, 진행중, 일시정지, 게임오버)
+	int mBlockX, mBlockY;		// 현재 블록 위치
+	int mTileX, mTileY;			// 타일 위치
+	int mBlockType;				// 현재 블록 종류
+	int mNextBlockType;         // 다음 블록 종류
+	int mCurrentRotation;       // 현재 블록 회전 상태
+	int mScore;                 // 점수
+	int mLevel;                 // 현재 레벨
+	int mGameStaus;             // 게임 상태 (타이틀, 진행중, 일시정지, 게임오버)
+
+	//보드 상태 표현 2차원 배열
+	int mCurBoardState[BOARD_HEIGHT][BOARD_WIDTH] = { 0, };
+	int mOldBoardState[BOARD_HEIGHT][BOARD_WIDTH] = { 0, };
 
 	//보드 색상 정의
-	const COLORREF boardColor = 0x00FFFFE3; // 아이보리
+	const COLORREF boardColor = 0x00dce6ee; // 아이보리
+	const COLORREF floorColor = 0x00808080; // 짙은 회색
 
 	// 블록 색상 정의
-	const COLORREF blockColor1 = 0x00D1E0FC; // 하늘색
-	const COLORREF blockColor2 = 0x00FFD000; // 노란색
-	const COLORREF blockColor3 = 0x00462679; // 보라색
-	const COLORREF blockColor4 = 0x00ff7f00; // 주황색
-	const COLORREF blockColor5 = 0x0000CFFF; // 파란색
-	const COLORREF blockColor6 = 0x00FF0000; // 빨간색
-	const COLORREF blockColor7 = 0x0000FF00; // 초록색
+	const COLORREF blockColor1 = 0x00fce0d1; // 하늘색
+	const COLORREF blockColor2 = 0x0000d0dd; // 노란색
+	const COLORREF blockColor3 = 0x00792646; // 보라색
+	const COLORREF blockColor4 = 0x00007fff; // 주황색
+	const COLORREF blockColor5 = 0x00ffcf00; // 파란색
+	const COLORREF blockColor6 = 0x000000ff; // 빨간색
+	const COLORREF blockColor7 = 0x0000ff00; // 초록색
 
 	// 블록 모양 정의 (4x4 매트릭스)
 	int Block_Type_1[4][4] = {
@@ -126,4 +131,5 @@ protected:
 public:
 	int myadd();
 	int Render(CDC *pDC);
+	void OnCreateBoard(CDC* pDC);
 };
