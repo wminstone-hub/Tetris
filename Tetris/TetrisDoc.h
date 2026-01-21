@@ -35,17 +35,17 @@ public:
 	int mOldBoardState[BOARD_HEIGHT][BOARD_WIDTH] = { 0, };
 
 	//보드 색상 정의
-	const COLORREF boardColor = 0x00FFFFE3; // 아이보리
-	const COLORREF floorColor = 0x00808080; // 아이보리
+	const COLORREF boardColor = 0x00dce6ee; // 아이보리
+	const COLORREF floorColor = 0x00808080; // 짙은 회색
 
 	// 블록 색상 정의
-	const COLORREF blockColor1 = 0x00D1E0FC; // 하늘색
-	const COLORREF blockColor2 = 0x00FFD000; // 노란색
-	const COLORREF blockColor3 = 0x00462679; // 보라색
-	const COLORREF blockColor4 = 0x00ff7f00; // 주황색
-	const COLORREF blockColor5 = 0x0000CFFF; // 파란색
-	const COLORREF blockColor6 = 0x00FF0000; // 빨간색
-	const COLORREF blockColor7 = 0x0000FF00; // 초록색
+	const COLORREF blockColor1 = 0x00fce0d1; // 하늘색
+	const COLORREF blockColor2 = 0x0000d0dd; // 노란색
+	const COLORREF blockColor3 = 0x00792646; // 보라색
+	const COLORREF blockColor4 = 0x00007fff; // 주황색
+	const COLORREF blockColor5 = 0x00ffcf00; // 파란색
+	const COLORREF blockColor6 = 0x000000ff; // 빨간색
+	const COLORREF blockColor7 = 0x0000ff00; // 초록색
 
 	// 블록 모양 정의 (4x4 매트릭스)
 	int Block_Type_1[4][4] = {
