@@ -242,16 +242,23 @@ void CTetrisDoc::OnCreateBoard(CDC* pDC)
 	return;
 }
 
-void CTetrisDoc::PaintTile(Tile tile, COLORREF color, CDC pDC)
+void CTetrisDoc::PaintTile(Tile tile, COLORREF color, CDC* pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
 	
 	//색상 칠 할 부분 Rect 계산
-	int rectStartX = BOARD_WIDTH_OFFSET + BLOCK_SIZE * tile.x;
-	int rectStartY = BOARD_HIEGHT_OFFSET + BLOCK_SIZE * tile.y;
-	int rectEndX = BOARD_WIDTH_OFFSET + (BLOCK_SIZE + 1) * tile.x;
-	int rectEndY = BOARD_HIEGHT_OFFSET + (BLOCK_SIZE + 1) * tile.y;
+	int rectStartX = BOARD_WIDTH_OFFSET + tile.x * BLOCK_SIZE;
+	int rectStartY = BOARD_HIEGHT_OFFSET + tile.y * BLOCK_SIZE;
+	int rectEndX = BOARD_WIDTH_OFFSET + (tile.x + 1) * BLOCK_SIZE;
+	int rectEndY = BOARD_HIEGHT_OFFSET + (tile.y + 1) * BLOCK_SIZE;
 	CRect paintSquare(rectStartX + 1, rectStartY + 1, rectEndX - 1, rectEndY - 1);
 
-	FillRect(pDC, paintSquare, CreateSolidBrush(color));
+	CBrush NewBrush(color);
+	CBrush* pOldBrush = pDC->SelectObject(&NewBrush);
+
+	pDC->FillRect(paintSquare, &NewBrush);
+
+	pDC->SelectObject(pOldBrush);
+	DeleteObject(&NewBrush);
+	return;
 }

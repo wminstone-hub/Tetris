@@ -69,7 +69,6 @@ void CTetrisView::OnDraw(CDC* pDC)
 		return;
 
 	pDoc->OnCreateBoard(pDC);
-
 }
 
 

@@ -48,19 +48,20 @@ public:
 	const COLORREF blockColor6 = 0x000000ff; // 빨간색
 	const COLORREF blockColor7 = 0x0000ff00; // 초록색
 
-	struct Tile {
+	//타일과 블록 구조체 정의
+	typedef struct {
 		int x;
 		int y;
-	};
+	}Tile;
 
-	struct Block {
+	typedef struct {
 		Tile tile1;
 		Tile tile2;
 		Tile tile3;
 		Tile tile4;
-	};
+	}Block;
 
-
+	//7가지 블록 타입 정의
 	Block blockType1;
 	Block blockType2;
 	Block blockType3;
@@ -103,5 +104,5 @@ public:
 	int myadd();
 	int Render(CDC *pDC);
 	void OnCreateBoard(CDC* pDC);
-	void PaintTile();
+	void PaintTile(Tile tile, COLORREF color, CDC* pDC);
 };
