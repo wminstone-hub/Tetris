@@ -103,4 +103,5 @@ public:
 	int myadd();
 	int Render(CDC *pDC);
 	void OnCreateBoard(CDC* pDC);
+	void PaintTile();
 };

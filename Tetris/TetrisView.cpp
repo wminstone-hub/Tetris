@@ -70,20 +70,6 @@ void CTetrisView::OnDraw(CDC* pDC)
 
 	pDoc->OnCreateBoard(pDC);
 
-	//pDoc->Render(pDC);
-
-	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
-	/*
-	dc.FillSolidRect(
-		100, 200,
-		BLOCK_SIZE,
-		BLOCK_SIZE,
-		RGB(255, 5, 255)
-	);
-	CBrush brush(RGB(0, 0, 0));
-	CRect rect(100, 200, 140, 240);
-	FrameRect(dc ,&rect, brush);
-	*/
 }
 
 
