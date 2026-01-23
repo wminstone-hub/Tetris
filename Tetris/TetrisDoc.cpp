@@ -195,7 +195,6 @@ void CTetrisDoc::OnCreateBoard(CDC* pDC)
 	int rectStartY = 0;
 	int rectEndX = 225;
 	int rectEndY = 40;
-	CRect square(rectStartX + 1, rectStartY + 1, rectEndX - 1, rectEndY - 1);
 
 	pDC->SelectObject(pOldPen);
 
@@ -232,4 +231,18 @@ void CTetrisDoc::OnCreateBoard(CDC* pDC)
 	DeleteObject(&boardBrush);
 	DeleteObject(&floorBrush);
 	return;
+}
+
+void CTetrisDoc::PaintTile(Tile tile, COLORREF color, CDC pDC)
+{
+	// TODO: 여기에 구현 코드 추가.
+	
+	//색상 칠 할 부분 Rect 계산
+	int rectStartX = BOARD_WIDTH_OFFSET + BLOCK_SIZE * tile.x;
+	int rectStartY = BOARD_HIEGHT_OFFSET + BLOCK_SIZE * tile.y;
+	int rectEndX = BOARD_WIDTH_OFFSET + (BLOCK_SIZE + 1) * tile.x;
+	int rectEndY = BOARD_HIEGHT_OFFSET + (BLOCK_SIZE + 1) * tile.y;
+	CRect paintSquare(rectStartX + 1, rectStartY + 1, rectEndX - 1, rectEndY - 1);
+
+	FillRect(pDC, paintSquare, CreateSolidBrush(color));
 }
