@@ -60,7 +60,7 @@ BOOL CTetrisView::PreCreateWindow(CREATESTRUCT& cs)
 }
 
 // CTetrisView 그리기
-
+ 
 void CTetrisView::OnDraw(CDC* pDC)
 {
 	CTetrisDoc* pDoc = GetDocument();

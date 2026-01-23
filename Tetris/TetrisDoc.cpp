@@ -151,16 +151,18 @@ int CTetrisDoc::Render(CDC *pDC)
 	pDC->SelectObject(&brush);
 	CRect rect;
 
-	for (mTileX = 0; mTileX < BOARD_WIDTH; mTileX++) {
-		for (mTileY = 0; mTileY < BOARD_HEIGHT; mTileY++) {
-			if () {
+	for (mTileY = 0; mTileY < BOARD_HEIGHT; mTileY++) {
+		for (mTileX = 1; mTileX < BOARD_WIDTH; mTileX++) {
+
+			if ( mCurBoardState[mTileY][mTileX] != mOldBoardState[mTileY][mTileX] ) {
 				pDC->FillRect(CRect(
-					BOARD_WIDTH_OFFSET + mTileX * (BLOCK_SIZE + 1),
-					BOARD_HIEGHT_OFFSET + (mTileY + 1) * (BLOCK_SIZE + 1),
-					BOARD_WIDTH_OFFSET + (mTileX + 1) * (BLOCK_SIZE - 1),
-					BOARD_HIEGHT_OFFSET + mTileY * (BLOCK_SIZE - 1)),
+					BOARD_WIDTH_OFFSET + mTileX * BLOCK_SIZE,
+					BOARD_HIEGHT_OFFSET + (mTileY + 1) * BLOCK_SIZE,
+					BOARD_WIDTH_OFFSET + (mTileX + 1) * BLOCK_SIZE,
+					BOARD_HIEGHT_OFFSET + mTileY * BLOCK_SIZE),
 					&brush
 				);
+
 			}
 		}
 	}
@@ -168,6 +170,11 @@ int CTetrisDoc::Render(CDC *pDC)
 
 	return 0;
 }
+//! * * *
+//* * * *
+//* * * *
+//@ * * !
+//
 
 void CTetrisDoc::OnCreateBoard(CDC* pDC)
 {

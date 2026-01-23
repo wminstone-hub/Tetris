@@ -20,7 +20,6 @@ protected: // serialization에서만 만들어집니다.
 
 // 멤버 변수입니다.
 public:
-	int mBoard[BOARD_HEIGHT][BOARD_WIDTH] = {0, }; // 게임 보드
 	int mBlockX, mBlockY;		// 현재 블록 위치
 	int mTileX, mTileY;			// 타일 위치
 	int mBlockType;				// 현재 블록 종류
@@ -96,6 +95,29 @@ public:
 		0, 7, 7, 0,
 		0, 0, 0, 0
 	};
+
+	struct Tile {
+		int x;
+		int y;
+	};
+
+	struct Block {
+		Tile tile1;
+		Tile tile2;
+		Tile tile3;
+		Tile tile4;
+	};
+
+
+	Block blockType1;
+	Block blockType2;
+	Block blockType3;
+	Block blockType4;
+	Block blockType5;
+	Block blockType6;
+	Block blockType7;
+
+
 
 
 // 작업입니다.
