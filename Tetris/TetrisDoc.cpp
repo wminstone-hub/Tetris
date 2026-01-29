@@ -32,6 +32,9 @@ CTetrisDoc::CTetrisDoc() noexcept
 {
 	// TODO: 여기에 일회성 생성 코드를 추가합니다.
 
+	InitBoardStatus();
+	
+
 }
 
 CTetrisDoc::~CTetrisDoc()
@@ -137,8 +140,8 @@ void CTetrisDoc::Dump(CDumpContext& dc) const
 void CTetrisDoc::InitBoardStatus()
 {
 	// TODO: 여기에 구현 코드 추가.
-	for (int i = 0; BoardStatus[BOARD_HEIGHT + FLOOR_HEIGHT - 1][i]; i++) {
-		BoardStatus[BOARD_HEIGHT + FLOOR_HEIGHT - 1][i] = -1; //바닥 부분 채우기
+	for (int i = 0; i < 10; i++) {
+		BoardStatus[BOARD_HEIGHT + FLOOR_HEIGHT - 1][i] = 1; //바닥 부분 채우기
 	}
 }
 

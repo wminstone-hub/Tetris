@@ -41,12 +41,8 @@ END_MESSAGE_MAP()
 CTetrisView::CTetrisView() noexcept
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
-	CTetrisDoc* pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-		return;
 	
-	pDoc->InitBoardStatus();
+
 }
 
 CTetrisView::~CTetrisView()
@@ -60,8 +56,6 @@ BOOL CTetrisView::PreCreateWindow(CREATESTRUCT& cs)
 
 	return CView::PreCreateWindow(cs);
 }
-
-
 
 
 // CTetrisView 그리기
@@ -82,7 +76,6 @@ void CTetrisView::OnDraw(CDC* pDC)
 		mTimerStr.Format(_T("%d"), pDoc->mTimer);
 		pDC->TextOutW(680, 125, mTimerStr);
 	}
-
 }
 
 // CTetrisView 인쇄
