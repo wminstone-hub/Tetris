@@ -29,24 +29,23 @@ public:
 	int mCurrentRotation;       // 현재 블록 회전 상태
 	int mScore;                 // 점수
 	int mLevel;                 // 현재 레벨
-	int mGameStaus;             // 게임 상태 (타이틀, 진행중, 일시정지, 게임오버)
+	int mGameStaus;             // 게임 상태 (타이틀 0, 진행중 1, 일시정지 2, 게임오버 3)
 
 	//보드 상태 표현 2차원 배열
-	int mCurBoardState[BOARD_HEIGHT + FLOOR_HEIGHT][BOARD_WIDTH + WALL_WIDTH] = { 0, };
-	int mOldBoardState[BOARD_HEIGHT + FLOOR_HEIGHT][BOARD_WIDTH + WALL_WIDTH] = { 0, };
+	int BoardState[BOARD_HEIGHT + FLOOR_HEIGHT][BOARD_WIDTH + WALL_WIDTH] = { 0, };
 
 	//보드 색상 정의
-	const COLORREF boardColor = 0x00dce6ee; // 아이보리
-	const COLORREF floorColor = 0x00808080; // 짙은 회색
+	const COLORREF boardColor = 0x00f0f0f0; // 아이보리
+	const COLORREF floorColor = 0x00808080; // 짙은회색
 
 	// 블록 색상 정의
-	const COLORREF blockColor1 = 0x00fce0d1; // 하늘색
-	const COLORREF blockColor2 = 0x0000d0dd; // 노란색
-	const COLORREF blockColor3 = 0x00792646; // 보라색
-	const COLORREF blockColor4 = 0x00007fff; // 주황색
-	const COLORREF blockColor5 = 0x00ffcf00; // 파란색
-	const COLORREF blockColor6 = 0x000000ff; // 빨간색
-	const COLORREF blockColor7 = 0x0000ff00; // 초록색
+	const COLORREF blockColor0 = 0x00fce0d1; // 하늘색
+	const COLORREF blockColor1 = 0x0000d0dd; // 노란색
+	const COLORREF blockColor2 = 0x00792646; // 보라색
+	const COLORREF blockColor3 = 0x00007fff; // 주황색
+	const COLORREF blockColor4 = 0x00ffcf00; // 파란색
+	const COLORREF blockColor5 = 0x000000ff; // 빨간색
+	const COLORREF blockColor6 = 0x0000ff00; // 초록색
 
 	//타일과 블록 구조체 정의
 	typedef struct {
@@ -55,20 +54,22 @@ public:
 	}Tile;
 
 	typedef struct {
-		Tile tile1;
-		Tile tile2;
-		Tile tile3;
-		Tile tile4;
+		char blockType; //블록 종류
+		Tile tile[4]; //블록을 구성하는 4개의 타일
+		COLORREF blockColor;
 	}Block;
 
 	//7가지 블록 타입 정의
-	Block blockType1;
-	Block blockType2;
-	Block blockType3;
-	Block blockType4;
-	Block blockType5;
-	Block blockType6;
-	Block blockType7;
+	Block blockType0 = { 0, { { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 } }, blockColor0 }; //I형
+	Block blockType1 = { 1, { { 4, 0 }, { 5, 0 }, { 4, 1 }, { 5, 1 } }, blockColor1 }; //O형
+	Block blockType2 = { 2, { { 4, 0 }, { 3, 1 }, { 4, 1 }, { 5, 1 } }, blockColor2 }; //T형
+	Block blockType3 = { 3, { { 4, 0 }, { 4, 1 }, { 5, 1 }, { 6, 1 } }, blockColor3 }; //J형
+	Block blockType4 = { 4, { { 5, 0 }, { 3, 1 }, { 4, 1 }, { 5, 1 } }, blockColor4 }; //L형
+	Block blockType5 = { 5, { { 4, 0 }, { 5, 0 }, { 5, 1 }, { 6, 1 } }, blockColor5 }; //Z형
+	Block blockType6 = { 6, { { 4, 0 }, { 5, 0 }, { 4, 1 }, { 3, 1 } }, blockColor6 }; //S형
+
+	//현재 블럭
+	Block curBlock;
 
 // 작업입니다.
 public:
@@ -101,8 +102,8 @@ protected:
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
 public:
-	int myadd();
-	int Render(CDC *pDC);
 	void OnCreateBoard(CDC* pDC);
 	void PaintTile(Tile tile, COLORREF color, CDC* pDC);
+	void PaintBlock(Block block, CDC* pDC);
+	void CreateBlock(Block block, CDC* pDC);
 };

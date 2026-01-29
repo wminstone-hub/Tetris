@@ -135,47 +135,6 @@ void CTetrisDoc::Dump(CDumpContext& dc) const
 #endif //_DEBUG
 
 
-// CTetrisDoc 명령
-
-int CTetrisDoc::myadd()
-{
-	// TODO: 여기에 구현 코드 추가.
-	return 0;
-}
-
-int CTetrisDoc::Render(CDC *pDC)
-{
-	// TODO: 여기에 구현 코드 추가.
-	
-	CBrush brush(boardColor);
-	pDC->SelectObject(&brush);
-	CRect rect;
-
-	for (mTileY = 0; mTileY < BOARD_HEIGHT; mTileY++) {
-		for (mTileX = 1; mTileX < BOARD_WIDTH; mTileX++) {
-
-			if ( mCurBoardState[mTileY][mTileX] != mOldBoardState[mTileY][mTileX] ) {
-				pDC->FillRect(CRect(
-					BOARD_WIDTH_OFFSET + mTileX * BLOCK_SIZE,
-					BOARD_HIEGHT_OFFSET + (mTileY + 1) * BLOCK_SIZE,
-					BOARD_WIDTH_OFFSET + (mTileX + 1) * BLOCK_SIZE,
-					BOARD_HIEGHT_OFFSET + mTileY * BLOCK_SIZE),
-					&brush
-				);
-
-			}
-		}
-	}
-	
-
-	return 0;
-}
-//! * * *
-//* * * *
-//* * * *
-//@ * * !
-//
-
 void CTetrisDoc::OnCreateBoard(CDC* pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
@@ -261,4 +220,45 @@ void CTetrisDoc::PaintTile(Tile tile, COLORREF color, CDC* pDC)
 	pDC->SelectObject(pOldBrush);
 	DeleteObject(&NewBrush);
 	return;
+}
+
+void CTetrisDoc::PaintBlock(Block block, CDC* pDC)
+{
+	// TODO: 여기에 구현 코드 추가.
+
+	for (Tile tile : block.tile) {
+		PaintTile(tile, block.blockColor, pDC);
+	}
+}
+
+void CTetrisDoc::CreateBlock(Block block, CDC* pDC)
+{
+	// TODO: 여기에 구현 코드 추가.
+
+	switch (block.blockType) {
+		case 0:
+			curBlock = blockType0;
+			break;
+		case 1:
+			curBlock = blockType1;
+			break;
+		case 2:
+			curBlock = blockType2;
+			break;
+		case 3:
+			curBlock = blockType3;
+			break;
+		case 4:
+			curBlock = blockType4;
+			break;
+		case 5:
+			curBlock = blockType5;
+			break;
+		case 6:
+			curBlock = blockType6;
+			break;
+		default:
+			break;
+	}
+	PaintBlock(curBlock, pDC);
 }
