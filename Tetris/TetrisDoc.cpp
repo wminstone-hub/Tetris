@@ -169,11 +169,6 @@ void CTetrisDoc::RenderBoard(CDC *pDC)
 		}
 	}
 }
-//! * * *
-//* * * *
-//* * * *
-//@ * * !
-//
 
 void CTetrisDoc::OnCreateBoard(CDC* pDC)
 {
