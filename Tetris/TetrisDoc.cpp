@@ -143,7 +143,9 @@ int CTetrisDoc::myadd()
 	return 0;
 }
 
-int CTetrisDoc::Render(CDC *pDC)
+
+
+void CTetrisDoc::RenderBoard(CDC *pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
 	
@@ -166,9 +168,6 @@ int CTetrisDoc::Render(CDC *pDC)
 			}
 		}
 	}
-	
-
-	return 0;
 }
 //! * * *
 //* * * *
@@ -262,3 +261,5 @@ void CTetrisDoc::PaintTile(Tile tile, COLORREF color, CDC* pDC)
 	DeleteObject(&NewBrush);
 	return;
 }
+ 
+

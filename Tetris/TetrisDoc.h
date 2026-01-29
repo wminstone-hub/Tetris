@@ -29,6 +29,7 @@ public:
 	int mCurrentRotation;       // 현재 블록 회전 상태
 	int mScore;                 // 점수
 	int mLevel;                 // 현재 레벨
+	int mTimer = 0;					// 게임진행시간
 	int mGameStaus;             // 게임 상태 (타이틀, 진행중, 일시정지, 게임오버)
 
 	//보드 상태 표현 2차원 배열
@@ -102,7 +103,7 @@ protected:
 #endif // SHARED_HANDLERS
 public:
 	int myadd();
-	int Render(CDC *pDC);
+	void RenderBoard(CDC *pDC);
 	void OnCreateBoard(CDC* pDC);
 	void PaintTile(Tile tile, COLORREF color, CDC* pDC);
 };
