@@ -282,15 +282,15 @@ void CTetrisDoc::CreateBlock(Block block, CDC* pDC)
 	return;
 }
  
-void CTetrisDoc::DropBlock(Block curBlock, Block oldBlock, CDC* pDC)
+void CTetrisDoc::DropBlock(Block* curBlock, CDC* pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
-	oldBlock = curBlock; //이전 블록 정보 저장
-	PaintBlock(oldBlock, boardColor, pDC); //이전 블록 지우기
+	*curBlock; //이전 블록 정보 저장
+	PaintBlock(*curBlock, boardColor, pDC); //이전 블록 지우기
 	for (int i = 0; i < 4; i++) {
-		curBlock.tile[i].y += 1; //블록 한 칸 아래로 이동
+		curBlock->tile[i].y += 1; //블록 한 칸 아래로 이동
 	}
-	PaintBlock(curBlock, curBlock.blockColor, pDC); //새로운 블록 그리기
+	PaintBlock(*curBlock, curBlock->blockColor, pDC); //새로운 블록 그리기
 }
 
 void CTetrisDoc::RenderBoard(CDC* pDC)

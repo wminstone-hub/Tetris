@@ -70,7 +70,6 @@ public:
 
 	//현재 블럭
 	Block curBlock;
-	Block oldBlock;
 
 // 작업입니다.
 public:
@@ -109,7 +108,6 @@ public:
 	void PaintTile(Tile tile, COLORREF color, CDC* pDC);
 	void PaintBlock(Block block, COLORREF blockColor, CDC* pDC);
 	void CreateBlock(Block block, CDC* pDC);
-	
-	void DropBlock(Block curBlock, Block oldBlock, CDC* pDC);
+	void DropBlock(Block* curBlock, CDC* pDC);
 	void InitBoardStatus();
 };
