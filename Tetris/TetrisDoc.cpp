@@ -170,15 +170,11 @@ int CTetrisDoc::Render(CDC *pDC)
 
 	return 0;
 }
-//! * * *
-//* * * *
-//* * * *
-//@ * * !
-//
 
-void CTetrisDoc::OnCreateBoard(CDC* pDC)
+void CTetrisDoc::CreateUI(CDC* pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
+
 	//보드 외곽선 및 구분선 그리기 펜
 	CPen boardPen(PS_SOLID, 3, RGB(0, 0, 0));
 	CPen* pOldPen = pDC->SelectObject(&boardPen);
@@ -199,17 +195,26 @@ void CTetrisDoc::OnCreateBoard(CDC* pDC)
 	pDC->Rectangle(600, 100, 775, 160);
 	pDC->TextOutW(672, 78, _T("TIMER"));
 
-	//게임 보드 생성
-	int rectStartX = 185;
-	int rectStartY = 0;
-	int rectEndX = 225;
-	int rectEndY = 40;
-
 	pDC->SelectObject(pOldPen);
 
+	DeleteObject(&boardPen);
+}
+
+
+void CTetrisDoc::DrawBoard(CDC* pDC)
+{
+	// TODO: 여기에 구현 코드 추가.
+	
 	//한 칸 그리기 펜
 	CPen squarePen(PS_SOLID, 1, RGB(0, 0, 0));
-	pDC->SelectObject(&squarePen);
+	CPen* pOldPen = pDC->SelectObject(&squarePen);
+
+	//게임 보드 생성
+	int rectStartX = BOARD_WIDTH_OFFSET;
+	int rectStartY = BOARD_HIEGHT_OFFSET;
+	int rectEndX = BOARD_WIDTH_OFFSET + BLOCK_SIZE;
+	int rectEndY = BLOCK_SIZE;
+
 	//보드 색상 브러시
 	CBrush boardBrush(boardColor);
 	CBrush floorBrush(floorColor);
@@ -224,15 +229,14 @@ void CTetrisDoc::OnCreateBoard(CDC* pDC)
 			rectStartX += BLOCK_SIZE;
 			rectEndX += BLOCK_SIZE;
 		}
-		rectStartX = 185;
-		rectEndX = 225;
+		rectStartX = BOARD_WIDTH_OFFSET;
+		rectEndX = BOARD_WIDTH_OFFSET + BLOCK_SIZE;
 		rectStartY += BLOCK_SIZE;
 		rectEndY += BLOCK_SIZE;
 	}
 
 	pDC->SelectObject(pOldPen);
 	
-	DeleteObject(&boardPen);
 	DeleteObject(&squarePen);
 
 	pDC->SelectObject(pOldBrush);
@@ -262,3 +266,4 @@ void CTetrisDoc::PaintTile(Tile tile, COLORREF color, CDC* pDC)
 	DeleteObject(&NewBrush);
 	return;
 }
+

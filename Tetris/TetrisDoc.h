@@ -103,6 +103,7 @@ protected:
 public:
 	int myadd();
 	int Render(CDC *pDC);
-	void OnCreateBoard(CDC* pDC);
+	void DrawBoard(CDC* pDC);
 	void PaintTile(Tile tile, COLORREF color, CDC* pDC);
+	void CreateUI(CDC* pDC);
 };

@@ -66,9 +66,10 @@ void CTetrisView::OnDraw(CDC* pDC)
 	CTetrisDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
-		return;
-
-	pDoc->OnCreateBoard(pDC);
+		return; 
+	
+	pDoc->CreateUI(pDC);
+	pDoc->DrawBoard(pDC);
 }
 
 
