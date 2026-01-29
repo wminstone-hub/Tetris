@@ -41,12 +41,12 @@ END_MESSAGE_MAP()
 CTetrisView::CTetrisView() noexcept
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
+	CTetrisDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
 	
-
-
-
-
-
+	pDoc->InitBoardStatus();
 }
 
 CTetrisView::~CTetrisView()
@@ -72,7 +72,8 @@ void CTetrisView::OnDraw(CDC* pDC)
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return; 
-	if (pDoc->mGameStaus < 0) {
+	
+	if (pDoc->mGameStaus == 0) {
 		pDoc->CreateUI(pDC);
 		pDoc->DrawBoard(pDC);
 	}
@@ -80,13 +81,9 @@ void CTetrisView::OnDraw(CDC* pDC)
 	if (pDoc->mGameStaus == 1) {
 		mTimerStr.Format(_T("%d"), pDoc->mTimer);
 		pDC->TextOutW(680, 125, mTimerStr);
-}
+	}
 
 }
-
-
-
-
 
 // CTetrisView 인쇄
 
@@ -168,6 +165,8 @@ void CTetrisView::OnStartBtnClicked()
 	if (!pDoc)
 		return;
 
+	CDC* pDC = GetDC();
+
 	GetDlgItem(101)->ShowWindow(SW_HIDE);
 	GetDlgItem(102)->ShowWindow(SW_HIDE);
 	GetDlgItem(103)->ShowWindow(SW_SHOWNORMAL);
@@ -177,7 +176,8 @@ void CTetrisView::OnStartBtnClicked()
 
 	pDoc->mGameStaus = 1; //게임 시작 상태로 변경
 	pDoc -> mTimer = 0;
-	SetTimer(1, 1000, NULL); // 1초 간격으로 블록하강 설정
+	SetTimer(1, 1000, NULL); //1초 간격 타이머 시작
+	pDoc->DrawBoard(pDC);
 }
 
 void CTetrisView::OnExitBtnClicked()

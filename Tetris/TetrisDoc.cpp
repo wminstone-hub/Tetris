@@ -134,16 +134,13 @@ void CTetrisDoc::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-void CTetrisDoc::RenderBoard(CDC *pDC)
+void CTetrisDoc::InitBoardStatus()
 {
 	// TODO: 여기에 구현 코드 추가.
-
+	for (int i = 0; BoardStatus[BOARD_HEIGHT + FLOOR_HEIGHT - 1][i]; i++) {
+		BoardStatus[BOARD_HEIGHT + FLOOR_HEIGHT - 1][i] = -1; //바닥 부분 채우기
+	}
 }
-//! * * *
-//* * * *
-//* * * *
-//@ * * !
-//
 
 void CTetrisDoc::CreateUI(CDC* pDC)
 {
@@ -166,7 +163,7 @@ void CTetrisDoc::CreateUI(CDC* pDC)
 	pDC->TextOutW(65, 210, _T("SCORE"));
 	// 타이머 칸
 	pDC->Rectangle(600, 100, 775, 160);
-	pDC->TextOutW(672, 78, _T("TIMER"));
+	pDC->TextOutW(667, 78, _T("TIMER"));
 
 	pDC->SelectObject(pOldPen);
 
@@ -282,4 +279,14 @@ void CTetrisDoc::CreateBlock(Block block, CDC* pDC)
 	return;
 }
  
+void CTetrisDoc::DropBlock(Block curBlock, Block oldBlock, CDC* pDC)
+{
+	// TODO: 여기에 구현 코드 추가.
+}
+
+void CTetrisDoc::RenderBoard(CDC* pDC)
+{
+	// TODO: 여기에 구현 코드 추가.
+
+}
 
