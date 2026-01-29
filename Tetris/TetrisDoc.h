@@ -102,9 +102,10 @@ protected:
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
 public:
-	void OnCreateBoard(CDC* pDC);
+	void CreateUI(CDC* pDC);
+	void DrawBoard(CDC* pDC);
 	void PaintTile(Tile tile, COLORREF color, CDC* pDC);
 	void PaintBlock(Block block, CDC* pDC);
 	void CreateBlock(Block block, CDC* pDC);
-	void CreateUI(CDC* pDC);
+	
 };

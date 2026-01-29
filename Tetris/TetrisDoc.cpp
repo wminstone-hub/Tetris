@@ -213,7 +213,7 @@ void CTetrisDoc::DrawBoard(CDC* pDC)
 void CTetrisDoc::PaintTile(Tile tile, COLORREF color, CDC* pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
-	
+
 	//색상 칠 할 부분 Rect 계산
 	int rectStartX = BOARD_WIDTH_OFFSET + tile.x * BLOCK_SIZE;
 	int rectStartY = BOARD_HIEGHT_OFFSET + tile.y * BLOCK_SIZE;
@@ -225,6 +225,10 @@ void CTetrisDoc::PaintTile(Tile tile, COLORREF color, CDC* pDC)
 	CBrush* pOldBrush = pDC->SelectObject(&NewBrush);
 
 	pDC->FillRect(paintSquare, &NewBrush);
+
+	pDC->SelectObject(pOldBrush);
+	DeleteObject(&NewBrush);
+}
 
 void CTetrisDoc::PaintBlock(Block block, CDC* pDC)
 {
@@ -265,9 +269,6 @@ void CTetrisDoc::CreateBlock(Block block, CDC* pDC)
 			break;
 	}
 	PaintBlock(curBlock, pDC);
-}
 
-	pDC->SelectObject(pOldBrush);
-	DeleteObject(&NewBrush);
 	return;
 }
