@@ -139,6 +139,41 @@ void CTetrisDoc::CreateUI(CDC* pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
 
+
+
+void CTetrisDoc::RenderBoard(CDC *pDC)
+{
+	// TODO: 여기에 구현 코드 추가.
+	
+	CBrush brush(boardColor);
+	pDC->SelectObject(&brush);
+	CRect rect;
+
+	for (mTileY = 0; mTileY < BOARD_HEIGHT; mTileY++) {
+		for (mTileX = 1; mTileX < BOARD_WIDTH; mTileX++) {
+
+			if ( mCurBoardState[mTileY][mTileX] != mOldBoardState[mTileY][mTileX] ) {
+				pDC->FillRect(CRect(
+					BOARD_WIDTH_OFFSET + mTileX * BLOCK_SIZE,
+					BOARD_HIEGHT_OFFSET + (mTileY + 1) * BLOCK_SIZE,
+					BOARD_WIDTH_OFFSET + (mTileX + 1) * BLOCK_SIZE,
+					BOARD_HIEGHT_OFFSET + mTileY * BLOCK_SIZE),
+					&brush
+				);
+
+			}
+		}
+	}
+}
+//! * * *
+//* * * *
+//* * * *
+//@ * * !
+//
+
+void CTetrisDoc::OnCreateBoard(CDC* pDC)
+{
+	// TODO: 여기에 구현 코드 추가.
 	//보드 외곽선 및 구분선 그리기 펜
 	CPen boardPen(PS_SOLID, 3, RGB(0, 0, 0));
 	CPen* pOldPen = pDC->SelectObject(&boardPen);
@@ -272,3 +307,5 @@ void CTetrisDoc::CreateBlock(Block block, CDC* pDC)
 
 	return;
 }
+ 
+

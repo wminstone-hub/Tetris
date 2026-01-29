@@ -21,6 +21,8 @@ public:
 	CButton mResumeBtn;
 	CButton mRestartBtn;
 
+	CString mTimerStr;
+
 // 작업입니다.
 public:
 
@@ -54,6 +56,7 @@ public:
 	void OnPauseBtnClicked();
 	void OnResumeBtnClicked();
 	void OnRestartBtnClicked();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 
 #ifndef _DEBUG  // TetrisView.cpp의 디버그 버전

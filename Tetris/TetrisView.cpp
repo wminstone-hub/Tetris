@@ -4,6 +4,7 @@
 
 #include "pch.h"
 #include "framework.h"
+#include <string>
 // SHARED_HANDLERS는 미리 보기, 축소판 그림 및 검색 필터 처리기를 구현하는 ATL 프로젝트에서 정의할 수 있으며
 // 해당 프로젝트와 문서 코드를 공유하도록 해 줍니다.
 #ifndef SHARED_HANDLERS
@@ -32,6 +33,7 @@ BEGIN_MESSAGE_MAP(CTetrisView, CView)
 	ON_BN_CLICKED(103, &CTetrisView::OnPauseBtnClicked)
 	ON_BN_CLICKED(104, &CTetrisView::OnResumeBtnClicked)
 	ON_BN_CLICKED(105, &CTetrisView::OnRestartBtnClicked)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 // CTetrisView 생성/소멸
@@ -59,6 +61,9 @@ BOOL CTetrisView::PreCreateWindow(CREATESTRUCT& cs)
 	return CView::PreCreateWindow(cs);
 }
 
+
+
+
 // CTetrisView 그리기
  
 void CTetrisView::OnDraw(CDC* pDC)
@@ -67,10 +72,20 @@ void CTetrisView::OnDraw(CDC* pDC)
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return; 
-	
-	pDoc->CreateUI(pDC);
-	pDoc->DrawBoard(pDC);
+	if (pDoc->mGameStaus < 0) {
+		pDoc->CreateUI(pDC);
+		pDoc->DrawBoard(pDC);
+	}
+
+	if (pDoc->mGameStaus == 1) {
+		mTimerStr.Format(_T("%d"), pDoc->mTimer);
+		pDC->TextOutW(680, 125, mTimerStr);
 }
+
+}
+
+
+
 
 
 // CTetrisView 인쇄
@@ -148,12 +163,21 @@ void CTetrisView::OnStartBtnClicked()
 {
 	// TODO: 여기에 구현 코드 추가.
 
+	CTetrisDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
 	GetDlgItem(101)->ShowWindow(SW_HIDE);
 	GetDlgItem(102)->ShowWindow(SW_HIDE);
 	GetDlgItem(103)->ShowWindow(SW_SHOWNORMAL);
 	GetDlgItem(101)->EnableWindow(FALSE);
 	GetDlgItem(102)->EnableWindow(FALSE);
 	GetDlgItem(103)->EnableWindow(TRUE);
+
+	pDoc->mGameStaus = 1; //게임 시작 상태로 변경
+	pDoc -> mTimer = 0;
+	SetTimer(1, 1000, NULL); // 1초 간격으로 블록하강 설정
 }
 
 void CTetrisView::OnExitBtnClicked()
@@ -186,4 +210,24 @@ void CTetrisView::OnResumeBtnClicked()
 void CTetrisView::OnRestartBtnClicked()
 {
 	// TODO: 여기에 구현 코드 추가.
+}
+
+void CTetrisView::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+
+	CTetrisDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	if (pDoc->mGameStaus == 1) {
+		pDoc->mTimer += 1;
+		Invalidate(FALSE);
+	}
+	else {
+		KillTimer(1);
+	}
+
+	CView::OnTimer(nIDEvent);
 }
