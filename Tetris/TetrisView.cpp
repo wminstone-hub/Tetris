@@ -71,16 +71,16 @@ void CTetrisView::OnDraw(CDC* pDC)
 	CTetrisDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
-		return;
-
-
-	if(pDoc->mGameStaus < 0)
-		pDoc->OnCreateBoard(pDC);
+		return; 
+	if (pDoc->mGameStaus < 0) {
+		pDoc->CreateUI(pDC);
+		pDoc->DrawBoard(pDC);
+	}
 
 	if (pDoc->mGameStaus == 1) {
 		mTimerStr.Format(_T("%d"), pDoc->mTimer);
 		pDC->TextOutW(680, 125, mTimerStr);
-	}
+}
 
 }
 
