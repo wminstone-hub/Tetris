@@ -162,6 +162,7 @@ void CTetrisDoc::CreateUI(CDC* pDC)
 	// 타이머 칸
 	pDC->Rectangle(600, 100, 775, 160);
 	pDC->TextOutW(672, 78, _T("TIMER"));
+	pDC->TextOutW(680, 125, TimerFormet(mTimer));
 
 	pDC->SelectObject(pOldPen);
 
@@ -278,3 +279,14 @@ void CTetrisDoc::CreateBlock(Block block, CDC* pDC)
 }
  
 
+// 분:초 형식 변환 함수
+CString CTetrisDoc::TimerFormet(int m_Timer)
+{
+	// TODO: 여기에 구현 코드 추가.
+	CString mMin, mSec;			// 변환된 분,초
+	mMin.Format(_T("%02d"), m_Timer / 60);
+	mSec.Format(_T("%02d"), m_Timer % 60);
+
+
+	return mMin + _T(" : ") + mSec;
+}
