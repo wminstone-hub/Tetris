@@ -75,6 +75,7 @@ void CTetrisView::OnDraw(CDC* pDC)
 	if (pDoc->mGameStaus == 1) {
 		mTimerStr.Format(_T("%d"), pDoc->mTimer);
 		pDC->TextOutW(680, 125, mTimerStr);
+		pDoc->DropBlock(pDoc->curBlock, pDoc->oldBlock, pDC);
 	}
 }
 
@@ -171,6 +172,7 @@ void CTetrisView::OnStartBtnClicked()
 	pDoc -> mTimer = 0;
 	SetTimer(1, 1000, NULL); //1초 간격 타이머 시작
 	pDoc->DrawBoard(pDC);
+	pDoc->CreateBlock(pDoc->blockType0, pDC);
 }
 
 void CTetrisView::OnExitBtnClicked()

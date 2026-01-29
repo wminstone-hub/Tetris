@@ -239,12 +239,12 @@ void CTetrisDoc::PaintTile(Tile tile, COLORREF color, CDC* pDC)
 	DeleteObject(&NewBrush);
 }
 
-void CTetrisDoc::PaintBlock(Block block, CDC* pDC)
+void CTetrisDoc::PaintBlock(Block block, COLORREF blockColor, CDC* pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
 
 	for (Tile tile : block.tile) {
-		PaintTile(tile, block.blockColor, pDC);
+		PaintTile(tile, blockColor, pDC);
 	}
 }
 
@@ -277,14 +277,20 @@ void CTetrisDoc::CreateBlock(Block block, CDC* pDC)
 		default:
 			break;
 	}
-	PaintBlock(curBlock, pDC);
-
+	PaintBlock(curBlock, curBlock.blockColor, pDC);
+	
 	return;
 }
  
 void CTetrisDoc::DropBlock(Block curBlock, Block oldBlock, CDC* pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
+	oldBlock = curBlock; //이전 블록 정보 저장
+	PaintBlock(oldBlock, boardColor, pDC); //이전 블록 지우기
+	for (int i = 0; i < 4; i++) {
+		curBlock.tile[i].y += 1; //블록 한 칸 아래로 이동
+	}
+	PaintBlock(curBlock, curBlock.blockColor, pDC); //새로운 블록 그리기
 }
 
 void CTetrisDoc::RenderBoard(CDC* pDC)
