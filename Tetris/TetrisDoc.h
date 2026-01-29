@@ -106,7 +106,6 @@ public:
 	void CreateUI(CDC* pDC);
 	void DrawBoard(CDC* pDC);
 	void RenderBoard(CDC *pDC);
-	void OnCreateBoard(CDC* pDC);
 	void PaintTile(Tile tile, COLORREF color, CDC* pDC);
 	void PaintBlock(Block block, CDC* pDC);
 	void CreateBlock(Block block, CDC* pDC);
