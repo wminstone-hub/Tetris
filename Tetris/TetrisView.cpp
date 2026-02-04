@@ -171,6 +171,7 @@ void CTetrisView::OnStartBtnClicked()
 	pDoc -> mTimer = 0;
 	SetTimer(1, 1000, NULL); //1초 간격 타이머 시작
 	pDoc->DrawBoard(pDC);
+	pDoc->CreateBlock(pDoc->blockType0, pDC);
 }
 
 void CTetrisView::OnExitBtnClicked()
@@ -215,9 +216,15 @@ void CTetrisView::OnTimer(UINT_PTR nIDEvent)
 		return;
 
 	CDC* pDC = GetDC();
+	int status = 0;
 
 	if (pDoc->mGameStaus == 1) {
 		pDoc->mTimer += 1;
+		status = pDoc->DropBlock(&pDoc->curBlock, pDC);
+		if (status == 1) {
+			status = 0;
+			pDoc->CreateBlock(pDoc->blockType1, pDC);
+		}
 		Invalidate(FALSE);
 	}
 	else {

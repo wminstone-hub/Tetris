@@ -140,8 +140,12 @@ void CTetrisDoc::Dump(CDumpContext& dc) const
 void CTetrisDoc::InitBoardStatus()
 {
 	// TODO: 여기에 구현 코드 추가.
-	for (int i = 0; i < 10; i++) {
-		BoardStatus[BOARD_HEIGHT + FLOOR_HEIGHT - 1][i] = 1; //바닥 부분 채우기
+	for (int i = 0; i < BOARD_HEIGHT + FLOOR_HEIGHT; i++) {
+		boardStatus[i][0] = -1; //왼쪽 벽
+		boardStatus[i][BOARD_WIDTH + WALL_WIDTH - 1] = -1; //오른쪽 벽
+	}
+	for (int j = 0; j < BOARD_WIDTH + WALL_WIDTH; j++) {
+		boardStatus[BOARD_HEIGHT + FLOOR_HEIGHT - 1][j] = -1; //바닥
 	}
 }
 
@@ -282,15 +286,48 @@ void CTetrisDoc::CreateBlock(Block block, CDC* pDC)
 	return;
 }
  
-void CTetrisDoc::DropBlock(Block* curBlock, CDC* pDC)
+int CTetrisDoc::DropBlock(Block* curBlock, CDC* pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
-	*curBlock; //이전 블록 정보 저장
+	if (CheckCollision(boardStatus, *curBlock, 0)) { //아래 충돌 검사
+		EmbedBlock(boardStatus, *curBlock, pDC);
+		CreateBlock(blockType1, pDC); //새로운 블록 생성
+		return 1;
+	} 
 	PaintBlock(*curBlock, boardColor, pDC); //이전 블록 지우기
 	for (int i = 0; i < 4; i++) {
 		curBlock->tile[i].y += 1; //블록 한 칸 아래로 이동
 	}
 	PaintBlock(*curBlock, curBlock->blockColor, pDC); //새로운 블록 그리기
+
+	return 0;
+}
+
+// 충돌 검사 함수 (dir == 0 : 아래, dir == 1 : 왼쪽, dir == 2 : 오른쪽)
+int CTetrisDoc::CheckCollision(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, int direction)
+{
+	// TODO: 여기에 구현 코드 추가
+	switch (direction) {
+		case 0: //아래 충돌 검사
+			for( int i = 0; i < 4; i++) {
+				if (boardStatus[curBlock.tile[i].y + 1][curBlock.tile[i].x] != 0) {
+					return 1; //충돌 발생
+				}
+			}
+			return 0; //충돌 없음
+	}
+
+	return -1;
+}
+
+void CTetrisDoc::EmbedBlock(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, CDC* pDC)
+{
+	// TODO: 여기에 구현 코드 추가.
+	for (int i = 0; i < 4; i++) {
+		boardStatus[curBlock.tile[i].y][curBlock.tile[i].x] = curBlock.blockType + 1; //보드 상태에 블록 정보 삽입
+	}
+	PaintBlock(curBlock, curBlock.blockColor, pDC); // 블록 그리기
+	return;
 }
 
 void CTetrisDoc::RenderBoard(CDC* pDC)
@@ -298,4 +335,3 @@ void CTetrisDoc::RenderBoard(CDC* pDC)
 	// TODO: 여기에 구현 코드 추가.
 
 }
-

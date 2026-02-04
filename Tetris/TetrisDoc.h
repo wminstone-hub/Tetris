@@ -9,6 +9,7 @@
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 20
 #define FLOOR_HEIGHT 1 //바닥 두께
+#define WALL_WIDTH 2  //벽 두께
 #define BLOCK_SIZE 40	//픽셀 단위로 블록 한 칸 크기
 #define BOARD_HIEGHT_OFFSET 0 // 게임보드위치
 #define BOARD_WIDTH_OFFSET 185 // 게임보드위치
@@ -32,7 +33,7 @@ public:
 	int mGameStaus = 0;             // 게임 상태 (타이틀: 0, 진행중: 1, 일시정지: 2, 게임오버: 3)
 
 	//보드 상태 표현 2차원 배열
-	int BoardStatus[BOARD_HEIGHT + FLOOR_HEIGHT][BOARD_WIDTH] = { 0, };
+	int boardStatus[BOARD_HEIGHT + FLOOR_HEIGHT][BOARD_WIDTH + WALL_WIDTH] = { 0, };
 
 	//보드 색상 정의
 	const COLORREF boardColor = 0x00f0f0f0; // 아이보리
@@ -104,10 +105,12 @@ protected:
 public:
 	void CreateUI(CDC* pDC);
 	void DrawBoard(CDC* pDC);
-	void RenderBoard(CDC *pDC);
 	void PaintTile(Tile tile, COLORREF color, CDC* pDC);
 	void PaintBlock(Block block, COLORREF blockColor, CDC* pDC);
 	void CreateBlock(Block block, CDC* pDC);
-	void DropBlock(Block* curBlock, CDC* pDC);
+	int DropBlock(Block* curBlock, CDC* pDC);
 	void InitBoardStatus();
+	int CheckCollision(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, int direction);
+	void EmbedBlock(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, CDC* pDC);
+	void RenderBoard(CDC* pDC);
 };
