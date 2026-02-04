@@ -5,6 +5,10 @@
 
 #pragma once
 
+#include <vector>
+#include <algorithm>
+#include <random>
+
 //게임보드 상수
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 20
@@ -30,7 +34,13 @@ public:
 	int mScore;                 // 점수
 	int mLevel;                 // 현재 레벨
 	int mTimer = 0;					// 게임진행시간
-	int mGameStaus = 0;             // 게임 상태 (타이틀: 0, 진행중: 1, 일시정지: 2, 게임오버: 3)
+	int mGameStatus = 0;             // 게임 상태 (타이틀: 0, 진행중: 1, 일시정지: 2, 게임오버: 3)
+	int mIsEmbeded = 0;          // 블록이 배열에 박혔는지 여부
+
+	//미노 블록 랜덤 생성 관련 변수
+	std::vector<int> blockBox;
+	size_t curIdx;
+	std::mt19937 engine;
 
 	//보드 상태 표현 2차원 배열
 	int boardStatus[BOARD_HEIGHT + FLOOR_HEIGHT][BOARD_WIDTH + WALL_WIDTH] = { 0, };
@@ -103,13 +113,20 @@ protected:
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
 public:
+	//초기화 함수들
+	void InitBoardStatus();
+	void InitBlockBox(std::vector<int>& blockBox);
+	//랜덤 블록 생성 함수 (7-bag)
+	void shuffleBox();
+	int nextBlock();
+	//블록 그리기 관련 함수들
 	void CreateUI(CDC* pDC);
 	void DrawBoard(CDC* pDC);
 	void PaintTile(Tile tile, COLORREF color, CDC* pDC);
 	void PaintBlock(Block block, COLORREF blockColor, CDC* pDC);
-	void CreateBlock(Block block, CDC* pDC);
+	//블록 동작 관련 함수들
+	void CreateBlock(CDC* pDC);
 	int DropBlock(Block* curBlock, CDC* pDC);
-	void InitBoardStatus();
 	int CheckCollision(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, int direction);
 	void EmbedBlock(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, CDC* pDC);
 	void RenderBoard(CDC* pDC);

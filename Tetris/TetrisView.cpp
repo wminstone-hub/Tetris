@@ -67,12 +67,12 @@ void CTetrisView::OnDraw(CDC* pDC)
 	if (!pDoc)
 		return; 
 	
-	if (pDoc->mGameStaus == 0) {
+	if (pDoc->mGameStatus == 0) {
 		pDoc->CreateUI(pDC);
 		pDoc->DrawBoard(pDC);
 	}
 
-	if (pDoc->mGameStaus == 1) {
+	if (pDoc->mGameStatus == 1) {
 		mTimerStr.Format(_T("%d"), pDoc->mTimer);
 		pDC->TextOutW(680, 125, mTimerStr);
 	}
@@ -167,11 +167,11 @@ void CTetrisView::OnStartBtnClicked()
 	GetDlgItem(102)->EnableWindow(FALSE);
 	GetDlgItem(103)->EnableWindow(TRUE);
 
-	pDoc->mGameStaus = 1; //게임 시작 상태로 변경
+	pDoc->mGameStatus = 1; //게임 시작 상태로 변경
 	pDoc -> mTimer = 0;
 	SetTimer(1, 1000, NULL); //1초 간격 타이머 시작
 	pDoc->DrawBoard(pDC);
-	pDoc->CreateBlock(pDoc->blockType0, pDC);
+	pDoc->CreateBlock(pDC);
 }
 
 void CTetrisView::OnExitBtnClicked()
@@ -216,14 +216,16 @@ void CTetrisView::OnTimer(UINT_PTR nIDEvent)
 		return;
 
 	CDC* pDC = GetDC();
-	int status = 0;
 
-	if (pDoc->mGameStaus == 1) {
+	if (pDoc->mGameStatus == 1) {
 		pDoc->mTimer += 1;
-		status = pDoc->DropBlock(&pDoc->curBlock, pDC);
-		if (status == 1) {
-			status = 0;
-			pDoc->CreateBlock(pDoc->blockType1, pDC);
+		pDoc->mIsEmbeded = pDoc->DropBlock(&pDoc->curBlock, pDC);
+		if (pDoc->mIsEmbeded == 1) {
+			pDoc->mIsEmbeded = 0;
+			pDoc->CreateBlock(pDC);
+			if (pDoc->mGameStatus == 3) {
+				pDC->TextOutW(300, 300, _T("Game Over"));
+			}
 		}
 		Invalidate(FALSE);
 	}

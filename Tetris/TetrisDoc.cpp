@@ -33,6 +33,7 @@ CTetrisDoc::CTetrisDoc() noexcept
 	// TODO: 여기에 일회성 생성 코드를 추가합니다.
 
 	InitBoardStatus();
+	InitBlockBox(blockBox);
 	
 
 }
@@ -137,6 +138,8 @@ void CTetrisDoc::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
+//////////////////////////////////////////////초기화 함수들
+
 void CTetrisDoc::InitBoardStatus()
 {
 	// TODO: 여기에 구현 코드 추가.
@@ -148,6 +151,41 @@ void CTetrisDoc::InitBoardStatus()
 		boardStatus[BOARD_HEIGHT + FLOOR_HEIGHT - 1][j] = -1; //바닥
 	}
 }
+
+void CTetrisDoc::InitBlockBox(std::vector<int>& blockBox)
+{
+	// TODO: 여기에 구현 코드 추가.
+	curIdx = 0;
+
+	for (int i = 0; i <= 6; ++i) {
+		blockBox.push_back(i);
+	}
+
+	std::random_device rd;
+	engine.seed(rd());
+
+	shuffleBox();
+}
+
+//////////////////////////////////////////////랜덤 블록 생성 함수 (7-bag)
+
+void CTetrisDoc::shuffleBox()
+{
+	// TODO: 여기에 구현 코드 추가.
+	shuffle(blockBox.begin(), blockBox.end(), engine);	//7-bag 섞기
+	curIdx = 0;											//인덱스 초기화
+}
+
+int CTetrisDoc::nextBlock()
+{
+	// TODO: 여기에 구현 코드 추가.
+	if (curIdx >= blockBox.size()) { //끝까지 도달했으면 다시 섞기
+		shuffleBox();
+	}
+	return blockBox[curIdx++]; //다음 블록 반환 후 인덱스 증가
+}
+
+//////////////////////////////////////////////블록 그리기 관련 함수들
 
 void CTetrisDoc::CreateUI(CDC* pDC)
 {
@@ -197,6 +235,7 @@ void CTetrisDoc::DrawBoard(CDC* pDC)
 	CBrush floorBrush(floorColor);
 	CBrush* pOldBrush = pDC->SelectObject(&boardBrush);
 
+	//보드 그리기
 	for (int curHight = 0; curHight <= BOARD_HEIGHT; curHight++) {
 		for (int curWidth = 0; curWidth < BOARD_WIDTH; curWidth++) {
 			if (curHight == BOARD_HEIGHT) {
@@ -212,12 +251,11 @@ void CTetrisDoc::DrawBoard(CDC* pDC)
 		rectEndY += BLOCK_SIZE;
 	}
 
+	//펜, 브러시 원상복구
 	pDC->SelectObject(pOldPen);
-	
 	DeleteObject(&squarePen);
 
 	pDC->SelectObject(pOldBrush);
-
 	DeleteObject(&boardBrush);
 	DeleteObject(&floorBrush);
 	return;
@@ -252,11 +290,14 @@ void CTetrisDoc::PaintBlock(Block block, COLORREF blockColor, CDC* pDC)
 	}
 }
 
-void CTetrisDoc::CreateBlock(Block block, CDC* pDC)
+//////////////////////////////////////////////블록 동작 관련 함수들
+
+void CTetrisDoc::CreateBlock(CDC* pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
 
-	switch (block.blockType) {
+	//현재 블록 설정
+	switch (nextBlock()) {
 		case 0:
 			curBlock = blockType0;
 			break;
@@ -281,8 +322,15 @@ void CTetrisDoc::CreateBlock(Block block, CDC* pDC)
 		default:
 			break;
 	}
+	for (int i = 0; i < 4; i++) {
+		if (boardStatus[curBlock.tile[i].y][curBlock.tile[i].x]) {
+			//게임 오버 처리
+			mGameStatus = 3; //게임오버 상태로 변경
+			return;
+		}
+	}
+
 	PaintBlock(curBlock, curBlock.blockColor, pDC);
-	
 	return;
 }
  
@@ -291,7 +339,6 @@ int CTetrisDoc::DropBlock(Block* curBlock, CDC* pDC)
 	// TODO: 여기에 구현 코드 추가.
 	if (CheckCollision(boardStatus, *curBlock, 0)) { //아래 충돌 검사
 		EmbedBlock(boardStatus, *curBlock, pDC);
-		CreateBlock(blockType1, pDC); //새로운 블록 생성
 		return 1;
 	} 
 	PaintBlock(*curBlock, boardColor, pDC); //이전 블록 지우기
@@ -315,9 +362,23 @@ int CTetrisDoc::CheckCollision(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Bloc
 				}
 			}
 			return 0; //충돌 없음
+		case 1: //왼쪽 충돌 검사
+			for (int i = 0; i < 4; i++) {
+				if (boardStatus[curBlock.tile[i].y][curBlock.tile[i].x - 1] != 0) {
+					return 1; //충돌 발생
+				}
+			}
+			return 0; //충돌 없음
+		case 2: //오른쪽 충돌 검사
+			for (int i = 0; i < 4; i++) {
+				if (boardStatus[curBlock.tile[i].y][curBlock.tile[i].x + 1] != 0) {
+					return 1; //충돌 발생
+				}
+			}
+			return 0; //충돌 없음
+		default:
+			return -1; //오류
 	}
-
-	return -1;
 }
 
 void CTetrisDoc::EmbedBlock(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, CDC* pDC)
@@ -335,3 +396,4 @@ void CTetrisDoc::RenderBoard(CDC* pDC)
 	// TODO: 여기에 구현 코드 추가.
 
 }
+
