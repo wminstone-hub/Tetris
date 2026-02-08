@@ -35,7 +35,6 @@ public:
 	int mLevel;                 // 현재 레벨
 	int mTimer = 0;					// 게임진행시간
 	int mGameStatus = 0;             // 게임 상태 (타이틀: 0, 진행중: 1, 일시정지: 2, 게임오버: 3)
-	int mIsEmbeded = 0;          // 블록이 배열에 박혔는지 여부
 
 	//미노 블록 랜덤 생성 관련 변수
 	std::vector<int> blockBox;
@@ -71,13 +70,13 @@ public:
 	}Block;
 
 	//7가지 블록 타입 정의
-	Block blockType0 = { 0, { { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 } }, blockColor0 }; //I형
-	Block blockType1 = { 1, { { 4, 0 }, { 5, 0 }, { 4, 1 }, { 5, 1 } }, blockColor1 }; //O형
-	Block blockType2 = { 2, { { 4, 0 }, { 3, 1 }, { 4, 1 }, { 5, 1 } }, blockColor2 }; //T형
-	Block blockType3 = { 3, { { 4, 0 }, { 4, 1 }, { 5, 1 }, { 6, 1 } }, blockColor3 }; //J형
-	Block blockType4 = { 4, { { 5, 0 }, { 3, 1 }, { 4, 1 }, { 5, 1 } }, blockColor4 }; //L형
-	Block blockType5 = { 5, { { 4, 0 }, { 5, 0 }, { 5, 1 }, { 6, 1 } }, blockColor5 }; //Z형
-	Block blockType6 = { 6, { { 4, 0 }, { 5, 0 }, { 4, 1 }, { 3, 1 } }, blockColor6 }; //S형
+	Block blockType0 = { 0, { { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 } }, blockColor0 }; //I형
+	Block blockType1 = { 1, { { 5, 0 }, { 6, 0 }, { 5, 1 }, { 6, 1 } }, blockColor1 }; //O형
+	Block blockType2 = { 2, { { 5, 0 }, { 4, 1 }, { 5, 1 }, { 6, 1 } }, blockColor2 }; //T형
+	Block blockType3 = { 3, { { 5, 0 }, { 5, 1 }, { 6, 1 }, { 7, 1 } }, blockColor3 }; //J형
+	Block blockType4 = { 4, { { 6, 0 }, { 4, 1 }, { 5, 1 }, { 6, 1 } }, blockColor4 }; //L형
+	Block blockType5 = { 5, { { 5, 0 }, { 6, 0 }, { 6, 1 }, { 7, 1 } }, blockColor5 }; //Z형
+	Block blockType6 = { 6, { { 5, 0 }, { 6, 0 }, { 5, 1 }, { 4, 1 } }, blockColor6 }; //S형
 
 	//현재 블럭
 	Block curBlock;
@@ -130,4 +129,5 @@ public:
 	int CheckCollision(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, int direction);
 	void EmbedBlock(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, CDC* pDC);
 	void RenderBoard(CDC* pDC);
+	int MoveBlockDirectionX(Block* curBlock, int direction, CDC* pDC);
 };

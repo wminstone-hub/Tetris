@@ -266,10 +266,11 @@ void CTetrisDoc::PaintTile(Tile tile, COLORREF color, CDC* pDC)
 	// TODO: 여기에 구현 코드 추가.
 
 	//색상 칠 할 부분 Rect 계산
-	int rectStartX = BOARD_WIDTH_OFFSET + tile.x * BLOCK_SIZE;
+	int rectStartX = BOARD_WIDTH_OFFSET + (tile.x - 1) * BLOCK_SIZE;
 	int rectStartY = BOARD_HIEGHT_OFFSET + tile.y * BLOCK_SIZE;
-	int rectEndX = BOARD_WIDTH_OFFSET + (tile.x + 1) * BLOCK_SIZE;
+	int rectEndX = BOARD_WIDTH_OFFSET + (tile.x) * BLOCK_SIZE;
 	int rectEndY = BOARD_HIEGHT_OFFSET + (tile.y + 1) * BLOCK_SIZE;
+	//테두리 제외한 내부 영역
 	CRect paintSquare(rectStartX + 1, rectStartY + 1, rectEndX - 1, rectEndY - 1);
 
 	CBrush NewBrush(color);
@@ -323,9 +324,10 @@ void CTetrisDoc::CreateBlock(CDC* pDC)
 			break;
 	}
 	for (int i = 0; i < 4; i++) {
-		if (boardStatus[curBlock.tile[i].y][curBlock.tile[i].x]) {
+		if (boardStatus[curBlock.tile[i].y][curBlock.tile[i].x]) { //생성 위치에 이미 블록이 있으면
 			//게임 오버 처리
 			mGameStatus = 3; //게임오버 상태로 변경
+			pDC->TextOutW(300, 300, _T("Game Over"));
 			return;
 		}
 	}
@@ -339,14 +341,40 @@ int CTetrisDoc::DropBlock(Block* curBlock, CDC* pDC)
 	// TODO: 여기에 구현 코드 추가.
 	if (CheckCollision(boardStatus, *curBlock, 0)) { //아래 충돌 검사
 		EmbedBlock(boardStatus, *curBlock, pDC);
+		CreateBlock(pDC);
 		return 1;
-	} 
+	}
 	PaintBlock(*curBlock, boardColor, pDC); //이전 블록 지우기
 	for (int i = 0; i < 4; i++) {
 		curBlock->tile[i].y += 1; //블록 한 칸 아래로 이동
 	}
 	PaintBlock(*curBlock, curBlock->blockColor, pDC); //새로운 블록 그리기
 
+	return 0;
+}
+
+int CTetrisDoc::MoveBlockDirectionX(Block* curBlock, int direction, CDC* pDC)
+{
+	// TODO: 여기에 구현 코드 추가.
+	if (CheckCollision(boardStatus, *curBlock, direction)) { //해당 방향 충돌 검사
+		return 1; 
+	}
+	PaintBlock(*curBlock, boardColor, pDC); //이전 블록 지우기
+	if (direction == 1) { //왼쪽 이동
+		for (int i = 0; i < 4; i++) {
+			curBlock->tile[i].x -= 1; //블록 왼쪽으로 이동
+		}
+	}
+	else if (direction == 2) { //오른쪽 이동
+		for (int i = 0; i < 4; i++) {
+			curBlock->tile[i].x += 1; //블록 오른쪽으로 이동
+		}
+
+	}
+	else
+		return -1; //오류
+	PaintBlock(*curBlock, curBlock->blockColor, pDC); //새로운 블록 그리기
+		
 	return 0;
 }
 
@@ -396,4 +424,3 @@ void CTetrisDoc::RenderBoard(CDC* pDC)
 	// TODO: 여기에 구현 코드 추가.
 
 }
-

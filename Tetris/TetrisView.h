@@ -57,6 +57,7 @@ public:
 	void OnResumeBtnClicked();
 	void OnRestartBtnClicked();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 };
 
 #ifndef _DEBUG  // TetrisView.cpp의 디버그 버전

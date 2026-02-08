@@ -34,6 +34,7 @@ BEGIN_MESSAGE_MAP(CTetrisView, CView)
 	ON_BN_CLICKED(104, &CTetrisView::OnResumeBtnClicked)
 	ON_BN_CLICKED(105, &CTetrisView::OnRestartBtnClicked)
 	ON_WM_TIMER()
+	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 // CTetrisView 생성/소멸
@@ -219,14 +220,7 @@ void CTetrisView::OnTimer(UINT_PTR nIDEvent)
 
 	if (pDoc->mGameStatus == 1) {
 		pDoc->mTimer += 1;
-		pDoc->mIsEmbeded = pDoc->DropBlock(&pDoc->curBlock, pDC);
-		if (pDoc->mIsEmbeded == 1) {
-			pDoc->mIsEmbeded = 0;
-			pDoc->CreateBlock(pDC);
-			if (pDoc->mGameStatus == 3) {
-				pDC->TextOutW(300, 300, _T("Game Over"));
-			}
-		}
+		pDoc->DropBlock(&pDoc->curBlock, pDC);
 		Invalidate(FALSE);
 	}
 	else {
@@ -234,4 +228,32 @@ void CTetrisView::OnTimer(UINT_PTR nIDEvent)
 	}
 
 	CView::OnTimer(nIDEvent);
+}
+
+void CTetrisView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	CTetrisDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	CDC* pDC = GetDC();
+
+	if (pDoc->mGameStatus == 1) {
+
+		if (nChar == VK_DOWN) {
+			pDoc->DropBlock(&pDoc->curBlock, pDC);
+			Invalidate(FALSE);
+		}
+		if (nChar == VK_LEFT) {
+			pDoc->MoveBlockDirectionX(&pDoc->curBlock, 1, pDC);
+			Invalidate(FALSE);
+		}
+		if(nChar == VK_RIGHT){
+			pDoc->MoveBlockDirectionX(&pDoc->curBlock, 2, pDC);
+			Invalidate(FALSE);
+		}
+
+	}
+	CView::OnKeyDown(nChar, nRepCnt, nFlags);
 }
