@@ -148,7 +148,7 @@ void CTetrisDoc::InitBoardStatus()
 		boardStatus[i][BOARD_WIDTH + WALL_WIDTH - 1] = -1; //오른쪽 벽
 	}
 	for (int j = 0; j < BOARD_WIDTH + WALL_WIDTH; j++) {
-		boardStatus[BOARD_HEIGHT + FLOOR_HEIGHT - 1][j] = -1; //바닥
+		boardStatus[BOARD_HEIGHT + CEILING_HEIGHT][j] = -1; //바닥
 	}
 }
 
@@ -165,6 +165,22 @@ void CTetrisDoc::InitBlockBox(std::vector<int>& blockBox)
 	engine.seed(rd());
 
 	shuffleBox();
+}
+
+//////////////////////////////////////////////게임 상태 관련 함수들
+
+int CTetrisDoc::IsGameOvered(CDC* pDC)
+{
+	// TODO: 여기에 구현 코드 추가.
+	for (int i = 1; i <= BOARD_WIDTH; i++) {
+		if (boardStatus[1][i] != 0) {
+			//게임 오버 처리
+			mGameStatus = 3; //게임오버 상태로 변경
+			pDC->TextOutW(300, 300, _T("Game Over"));
+			return 1;
+		}
+	}
+	return 0;
 }
 
 //////////////////////////////////////////////랜덤 블록 생성 함수 (7-bag)
@@ -195,7 +211,7 @@ void CTetrisDoc::CreateUI(CDC* pDC)
 	CPen* pOldPen = pDC->SelectObject(&boardPen);
 
 	pDC->SelectObject(&boardPen);
-	// 게임 보드 구분 세로선(게임보드 픽셀 185~685)
+	// 게임 보드 구분 세로선(게임보드 픽셀 185~588)
 	pDC->MoveTo(182, 0);
 	pDC->LineTo(182, 1000);
 	pDC->MoveTo(588, 0);
@@ -232,18 +248,25 @@ void CTetrisDoc::DrawBoard(CDC* pDC)
 
 	//보드 색상 브러시
 	CBrush boardBrush(boardColor);
+	CBrush ceilingBrush(ceilingColor);
 	CBrush floorBrush(floorColor);
 	CBrush* pOldBrush = pDC->SelectObject(&boardBrush);
 
 	//보드 그리기
-	for (int curHight = 0; curHight <= BOARD_HEIGHT; curHight++) {
+	for (int curHeight = 0; curHeight < BOARD_HEIGHT + CEILING_HEIGHT + FLOOR_HEIGHT; curHeight++) {
 		for (int curWidth = 0; curWidth < BOARD_WIDTH; curWidth++) {
-			if (curHight == BOARD_HEIGHT) {
+			if (curHeight == 0 || curHeight == 1) {
+				pDC->SelectObject(&ceilingBrush);
+			}
+			else if (curHeight == BOARD_HEIGHT + CEILING_HEIGHT) {
 				pDC->SelectObject(&floorBrush);
 			}
-			pDC->Rectangle(rectStartX, rectStartY, rectEndX, rectEndY);
-			rectStartX += BLOCK_SIZE;
-			rectEndX += BLOCK_SIZE;
+			else {
+				pDC->SelectObject(&boardBrush);
+			}
+				pDC->Rectangle(rectStartX, rectStartY, rectEndX, rectEndY);
+				rectStartX += BLOCK_SIZE;
+				rectEndX += BLOCK_SIZE;
 		}
 		rectStartX = BOARD_WIDTH_OFFSET;
 		rectEndX = BOARD_WIDTH_OFFSET + BLOCK_SIZE;
@@ -290,13 +313,29 @@ void CTetrisDoc::PaintBlock(Block block, COLORREF blockColor, CDC* pDC)
 		PaintTile(tile, blockColor, pDC);
 	}
 }
+void CTetrisDoc::PaintBlock(Block block, CDC* pDC)
+{
+	// TODO: 여기에 구현 코드 추가.
+
+	for (Tile tile : block.tile) {
+		if (tile.y == 0 || tile.y == 1) //천장 부분은 천장 색상으로 칠하기
+			PaintTile(tile, ceilingColor, pDC);
+		else
+			PaintTile(tile, boardColor, pDC);
+	}
+}
 
 //////////////////////////////////////////////블록 동작 관련 함수들
 
 void CTetrisDoc::CreateBlock(CDC* pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
+	
 
+	if (IsGameOvered(pDC)) {//게임 오버 검사
+		return;
+	}
+	
 	//현재 블록 설정
 	switch (nextBlock()) {
 		case 0:
@@ -323,15 +362,6 @@ void CTetrisDoc::CreateBlock(CDC* pDC)
 		default:
 			break;
 	}
-	for (int i = 0; i < 4; i++) {
-		if (boardStatus[curBlock.tile[i].y][curBlock.tile[i].x]) { //생성 위치에 이미 블록이 있으면
-			//게임 오버 처리
-			mGameStatus = 3; //게임오버 상태로 변경
-			pDC->TextOutW(300, 300, _T("Game Over"));
-			return;
-		}
-	}
-
 	PaintBlock(curBlock, curBlock.blockColor, pDC);
 	return;
 }
@@ -344,7 +374,7 @@ int CTetrisDoc::DropBlock(Block* curBlock, CDC* pDC)
 		CreateBlock(pDC);
 		return 1;
 	}
-	PaintBlock(*curBlock, boardColor, pDC); //이전 블록 지우기
+	PaintBlock(*curBlock, pDC); //이전 블록 지우기
 	for (int i = 0; i < 4; i++) {
 		curBlock->tile[i].y += 1; //블록 한 칸 아래로 이동
 	}
@@ -359,7 +389,7 @@ int CTetrisDoc::MoveBlockDirectionX(Block* curBlock, int direction, CDC* pDC)
 	if (CheckCollision(boardStatus, *curBlock, direction)) { //해당 방향 충돌 검사
 		return 1; 
 	}
-	PaintBlock(*curBlock, boardColor, pDC); //이전 블록 지우기
+	PaintBlock(*curBlock, pDC); //이전 블록 지우기
 	if (direction == 1) { //왼쪽 이동
 		for (int i = 0; i < 4; i++) {
 			curBlock->tile[i].x -= 1; //블록 왼쪽으로 이동

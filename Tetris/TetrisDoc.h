@@ -13,6 +13,7 @@
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 20
 #define FLOOR_HEIGHT 1 //바닥 두께
+#define CEILING_HEIGHT 2 //천장 두께
 #define WALL_WIDTH 2  //벽 두께
 #define BLOCK_SIZE 40	//픽셀 단위로 블록 한 칸 크기
 #define BOARD_HIEGHT_OFFSET 0 // 게임보드위치
@@ -42,10 +43,11 @@ public:
 	std::mt19937 engine;
 
 	//보드 상태 표현 2차원 배열
-	int boardStatus[BOARD_HEIGHT + FLOOR_HEIGHT][BOARD_WIDTH + WALL_WIDTH] = { 0, };
+	int boardStatus[BOARD_HEIGHT + CEILING_HEIGHT + FLOOR_HEIGHT][BOARD_WIDTH + WALL_WIDTH] = { 0, };
 
 	//보드 색상 정의
 	const COLORREF boardColor = 0x00f0f0f0; // 아이보리
+	const COLORREF ceilingColor = 0x0053d2ec; // 옅은노랑
 	const COLORREF floorColor = 0x00808080; // 짙은회색
 
 	// 블록 색상 정의
@@ -115,6 +117,8 @@ public:
 	//초기화 함수들
 	void InitBoardStatus();
 	void InitBlockBox(std::vector<int>& blockBox);
+	//게임 상태 관련 함수들
+	int IsGameOvered(CDC* pDC);
 	//랜덤 블록 생성 함수 (7-bag)
 	void shuffleBox();
 	int nextBlock();
@@ -123,11 +127,12 @@ public:
 	void DrawBoard(CDC* pDC);
 	void PaintTile(Tile tile, COLORREF color, CDC* pDC);
 	void PaintBlock(Block block, COLORREF blockColor, CDC* pDC);
+	void PaintBlock(Block block, CDC* pDC);
 	//블록 동작 관련 함수들
 	void CreateBlock(CDC* pDC);
 	int DropBlock(Block* curBlock, CDC* pDC);
+	int MoveBlockDirectionX(Block* curBlock, int direction, CDC* pDC);
 	int CheckCollision(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, int direction);
 	void EmbedBlock(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, CDC* pDC);
 	void RenderBoard(CDC* pDC);
-	int MoveBlockDirectionX(Block* curBlock, int direction, CDC* pDC);
 };
