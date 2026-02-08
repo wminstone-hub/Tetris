@@ -12,6 +12,7 @@
 
 #include "TetrisDoc.h"
 
+
 #include <propkey.h>
 
 #ifdef _DEBUG
@@ -143,7 +144,7 @@ void CTetrisDoc::Dump(CDumpContext& dc) const
 void CTetrisDoc::InitBoardStatus()
 {
 	// TODO: 여기에 구현 코드 추가.
-	for (int i = 0; i < BOARD_HEIGHT + FLOOR_HEIGHT; i++) {
+	for (int i = 0; i < BOARD_HEIGHT + CEILING_HEIGHT; i++) {
 		boardStatus[i][0] = -1; //왼쪽 벽
 		boardStatus[i][BOARD_WIDTH + WALL_WIDTH - 1] = -1; //오른쪽 벽
 	}
@@ -291,7 +292,7 @@ void CTetrisDoc::PaintTile(Tile tile, COLORREF color, CDC* pDC)
 	//색상 칠 할 부분 Rect 계산
 	int rectStartX = BOARD_WIDTH_OFFSET + (tile.x - 1) * BLOCK_SIZE;
 	int rectStartY = BOARD_HIEGHT_OFFSET + tile.y * BLOCK_SIZE;
-	int rectEndX = BOARD_WIDTH_OFFSET + (tile.x) * BLOCK_SIZE;
+	int rectEndX = BOARD_WIDTH_OFFSET + tile.x * BLOCK_SIZE;
 	int rectEndY = BOARD_HIEGHT_OFFSET + (tile.y + 1) * BLOCK_SIZE;
 	//테두리 제외한 내부 영역
 	CRect paintSquare(rectStartX + 1, rectStartY + 1, rectEndX - 1, rectEndY - 1);
@@ -313,6 +314,8 @@ void CTetrisDoc::PaintBlock(Block block, COLORREF blockColor, CDC* pDC)
 		PaintTile(tile, blockColor, pDC);
 	}
 }
+
+//블록 색상 지우기 오버로드
 void CTetrisDoc::PaintBlock(Block block, CDC* pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
@@ -446,7 +449,87 @@ void CTetrisDoc::EmbedBlock(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block c
 		boardStatus[curBlock.tile[i].y][curBlock.tile[i].x] = curBlock.blockType + 1; //보드 상태에 블록 정보 삽입
 	}
 	PaintBlock(curBlock, curBlock.blockColor, pDC); // 블록 그리기
+	EraseOneLine(pDC); //라인 지우기 검사 및 처리
 	return;
+}
+
+void CTetrisDoc::EraseOneLine(CDC* pDC)
+{
+	// TODO: 여기에 구현 코드 추가.
+	std::vector<int> line; // 확인해야 하는 라인의 y좌표
+	Tile tile;
+	//확인해야 하는 중복 제거된 라인 벡터 생성
+	for (int i = 0; i < sizeof(curBlock.tile)/sizeof(curBlock.tile[0]); i++) {
+		if (line.size() == 0) {
+			line.push_back(curBlock.tile[i].y); //처음에는 무조건 추가
+			continue;
+		}
+		for (int y : line) {
+			if (curBlock.tile[i].y == y) {
+				break; //이미 벡터에 들어있는 라인인 경우 건너뜀
+			}
+			line.push_back(curBlock.tile[i].y); //확인해야 하는 라인 추가
+		}
+	}
+	//라인 검사
+	for (int y : line) {
+		bool isFullLine = true;
+		for (int x = 1; x <= BOARD_WIDTH; x++) {
+			if (boardStatus[y][x] == 0) {
+				isFullLine = false; //빈 칸이 있으면 꽉 찬 라인이 아님
+				break;
+			}
+		}
+		if (isFullLine) {
+			//라인 지우기
+			for (int x = 1; x <= BOARD_WIDTH; x++) {
+				boardStatus[y][x] = 0; //라인 상태 초기화
+				tile.x = x; tile.y = y;
+				PaintTile(tile, boardColor, pDC); //라인 지우기 출력
+			}
+			//위의 라인들을 한 칸씩 내리기
+			for (int row = y; row > 0; row--) {
+				for (int x = 1; x <= BOARD_WIDTH; x++) {
+					boardStatus[row][x] = boardStatus[row - 1][x];
+					tile.x = x; tile.y = row;
+					//한 칸 아래로 칠하기
+					switch (boardStatus[row][x]) {
+					case 0:
+						if (row == 0 || row == 1)
+							PaintTile(tile, ceilingColor, pDC);
+						else
+							PaintTile(tile, boardColor, pDC);
+						break;
+					case 1:
+						PaintTile(tile, blockColor0, pDC);
+						break;
+					case 2:
+						PaintTile(tile, blockColor1, pDC);
+						break;
+					case 3:
+						PaintTile(tile, blockColor2, pDC);
+						break;
+					case 4:
+						PaintTile(tile, blockColor3, pDC);
+						break;
+					case 5:
+						PaintTile(tile, blockColor4, pDC);
+						break;
+					case 6:
+						PaintTile(tile, blockColor5, pDC);
+						break;
+					case 7:
+						PaintTile(tile, blockColor6, pDC);
+						break;
+					default:
+						break;
+					}
+				}
+			}
+			//점수 증가
+			mScore += 100;
+		}
+	}
 }
 
 void CTetrisDoc::RenderBoard(CDC* pDC)

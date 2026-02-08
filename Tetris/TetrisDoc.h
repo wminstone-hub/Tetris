@@ -134,5 +134,6 @@ public:
 	int MoveBlockDirectionX(Block* curBlock, int direction, CDC* pDC);
 	int CheckCollision(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, int direction);
 	void EmbedBlock(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, CDC* pDC);
+	void EraseOneLine(CDC* pDC);
 	void RenderBoard(CDC* pDC);
 };
