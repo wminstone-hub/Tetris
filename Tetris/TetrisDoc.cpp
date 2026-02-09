@@ -526,6 +526,12 @@ void CTetrisDoc::EraseOneLine(CDC* pDC)
 					}
 				}
 			}
+			//맨 위 라인 초기화
+			for (int x = 1; x <= BOARD_WIDTH; x++) {
+				boardStatus[0][x] = 0;
+				tile.x = x; tile.y = 0;
+				PaintTile(tile, ceilingColor, pDC);
+			}
 			//점수 증가
 			mScore += 100;
 		}
