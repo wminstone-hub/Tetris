@@ -5,11 +5,16 @@
 
 #pragma once
 
+#include <vector>
+#include <algorithm>
+#include <random>
+
 //게임보드 상수
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 20
-#define WALL_WIDTH 2	//벽 두께
 #define FLOOR_HEIGHT 1 //바닥 두께
+#define CEILING_HEIGHT 2 //천장 두께
+#define WALL_WIDTH 2  //벽 두께
 #define BLOCK_SIZE 40	//픽셀 단위로 블록 한 칸 크기
 #define BOARD_HIEGHT_OFFSET 0 // 게임보드위치
 #define BOARD_WIDTH_OFFSET 185 // 게임보드위치
@@ -29,14 +34,20 @@ public:
 	int mCurrentRotation;       // 현재 블록 회전 상태
 	int mScore;                 // 점수
 	int mLevel;                 // 현재 레벨
-	int mTimer = 0;				// 게임진행시간
-	int mGameStaus;             // 게임 상태 (타이틀, 진행중, 일시정지, 게임오버)
+	int mTimer = 0;					// 게임진행시간
+	int mGameStatus = 0;             // 게임 상태 (타이틀: 0, 진행중: 1, 일시정지: 2, 게임오버: 3)
+
+	//미노 블록 랜덤 생성 관련 변수
+	std::vector<int> blockBox;
+	size_t curIdx;
+	std::mt19937 engine;
 
 	//보드 상태 표현 2차원 배열
-	int BoardState[BOARD_HEIGHT + FLOOR_HEIGHT][BOARD_WIDTH + WALL_WIDTH] = { 0, };
+	int boardStatus[BOARD_HEIGHT + CEILING_HEIGHT + FLOOR_HEIGHT][BOARD_WIDTH + WALL_WIDTH] = { 0, };
 
 	//보드 색상 정의
 	const COLORREF boardColor = 0x00f0f0f0; // 아이보리
+	const COLORREF ceilingColor = 0x0053d2ec; // 옅은노랑
 	const COLORREF floorColor = 0x00808080; // 짙은회색
 
 	// 블록 색상 정의
@@ -61,13 +72,13 @@ public:
 	}Block;
 
 	//7가지 블록 타입 정의
-	Block blockType0 = { 0, { { 3, 0 }, { 4, 0 }, { 5, 0 }, { 6, 0 } }, blockColor0 }; //I형
-	Block blockType1 = { 1, { { 4, 0 }, { 5, 0 }, { 4, 1 }, { 5, 1 } }, blockColor1 }; //O형
-	Block blockType2 = { 2, { { 4, 0 }, { 3, 1 }, { 4, 1 }, { 5, 1 } }, blockColor2 }; //T형
-	Block blockType3 = { 3, { { 4, 0 }, { 4, 1 }, { 5, 1 }, { 6, 1 } }, blockColor3 }; //J형
-	Block blockType4 = { 4, { { 5, 0 }, { 3, 1 }, { 4, 1 }, { 5, 1 } }, blockColor4 }; //L형
-	Block blockType5 = { 5, { { 4, 0 }, { 5, 0 }, { 5, 1 }, { 6, 1 } }, blockColor5 }; //Z형
-	Block blockType6 = { 6, { { 4, 0 }, { 5, 0 }, { 4, 1 }, { 3, 1 } }, blockColor6 }; //S형
+	Block blockType0 = { 0, { { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 } }, blockColor0 }; //I형
+	Block blockType1 = { 1, { { 5, 0 }, { 6, 0 }, { 5, 1 }, { 6, 1 } }, blockColor1 }; //O형
+	Block blockType2 = { 2, { { 5, 0 }, { 4, 1 }, { 5, 1 }, { 6, 1 } }, blockColor2 }; //T형
+	Block blockType3 = { 3, { { 5, 0 }, { 5, 1 }, { 6, 1 }, { 7, 1 } }, blockColor3 }; //J형
+	Block blockType4 = { 4, { { 6, 0 }, { 4, 1 }, { 5, 1 }, { 6, 1 } }, blockColor4 }; //L형
+	Block blockType5 = { 5, { { 5, 0 }, { 6, 0 }, { 6, 1 }, { 7, 1 } }, blockColor5 }; //Z형
+	Block blockType6 = { 6, { { 5, 0 }, { 6, 0 }, { 5, 1 }, { 4, 1 } }, blockColor6 }; //S형
 
 	//현재 블럭
 	Block curBlock;
@@ -103,12 +114,26 @@ protected:
 	void SetSearchContent(const CString& value);
 #endif // SHARED_HANDLERS
 public:
+	//초기화 함수들
+	void InitBoardStatus();
+	void InitBlockBox(std::vector<int>& blockBox);
+	//게임 상태 관련 함수들
+	int IsGameOvered(CDC* pDC);
+	//랜덤 블록 생성 함수 (7-bag)
+	void shuffleBox();
+	int nextBlock();
+	//블록 그리기 관련 함수들
 	void CreateUI(CDC* pDC);
 	void DrawBoard(CDC* pDC);
-	void RenderBoard(CDC *pDC);
 	void PaintTile(Tile tile, COLORREF color, CDC* pDC);
+	void PaintBlock(Block block, COLORREF blockColor, CDC* pDC);
 	void PaintBlock(Block block, CDC* pDC);
-	void CreateBlock(Block block, CDC* pDC);
-	
-	CString TimerFormet(int m_Timer);
+	//블록 동작 관련 함수들
+	void CreateBlock(CDC* pDC);
+	int DropBlock(Block* curBlock, CDC* pDC);
+	int MoveBlockDirectionX(Block* curBlock, int direction, CDC* pDC);
+	int CheckCollision(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, int direction);
+	void EmbedBlock(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, CDC* pDC);
+	void EraseOneLine(CDC* pDC);
+	void RenderBoard(CDC* pDC);
 };

@@ -34,6 +34,7 @@ BEGIN_MESSAGE_MAP(CTetrisView, CView)
 	ON_BN_CLICKED(104, &CTetrisView::OnResumeBtnClicked)
 	ON_BN_CLICKED(105, &CTetrisView::OnRestartBtnClicked)
 	ON_WM_TIMER()
+	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 // CTetrisView 생성/소멸
@@ -42,10 +43,6 @@ CTetrisView::CTetrisView() noexcept
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
 	
-
-
-
-
 
 }
 
@@ -62,8 +59,6 @@ BOOL CTetrisView::PreCreateWindow(CREATESTRUCT& cs)
 }
 
 
-
-
 // CTetrisView 그리기
  
 void CTetrisView::OnDraw(CDC* pDC)
@@ -72,22 +67,17 @@ void CTetrisView::OnDraw(CDC* pDC)
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return; 
-	if (pDoc->mGameStaus < 0) {
+	
+	if (pDoc->mGameStatus == 0) {
 		pDoc->CreateUI(pDC);
 		pDoc->DrawBoard(pDC);
 	}
 
-	if (pDoc->mGameStaus == 1) {
-		pDC->TextOutW(680, 125, pDoc->TimerFormet(pDoc->mTimer));
-		
-		
+	if (pDoc->mGameStatus == 1) {
+		mTimerStr.Format(_T("%d"), pDoc->mTimer);
+		pDC->TextOutW(680, 125, mTimerStr);
 	}
-
 }
-
-
-
-
 
 // CTetrisView 인쇄
 
@@ -169,6 +159,8 @@ void CTetrisView::OnStartBtnClicked()
 	if (!pDoc)
 		return;
 
+	CDC* pDC = GetDC();
+
 	GetDlgItem(101)->ShowWindow(SW_HIDE);
 	GetDlgItem(102)->ShowWindow(SW_HIDE);
 	GetDlgItem(103)->ShowWindow(SW_SHOWNORMAL);
@@ -176,9 +168,11 @@ void CTetrisView::OnStartBtnClicked()
 	GetDlgItem(102)->EnableWindow(FALSE);
 	GetDlgItem(103)->EnableWindow(TRUE);
 
-	pDoc->mGameStaus = 1; //게임 시작 상태로 변경
+	pDoc->mGameStatus = 1; //게임 시작 상태로 변경
 	pDoc -> mTimer = 0;
-	SetTimer(1, 1000, NULL); // 1초 간격으로 블록하강 설정
+	SetTimer(1, 1000, NULL); //1초 간격 타이머 시작
+	pDoc->DrawBoard(pDC);
+	pDoc->CreateBlock(pDC);
 }
 
 void CTetrisView::OnExitBtnClicked()
@@ -228,6 +222,7 @@ void CTetrisView::OnTimer(UINT_PTR nIDEvent)
 
 	case 1: //게임 진행중
 		pDoc->mTimer += 1;
+		pDoc->DropBlock(&pDoc->curBlock, pDC);
 		Invalidate(FALSE);
 		break;
 
@@ -243,4 +238,32 @@ void CTetrisView::OnTimer(UINT_PTR nIDEvent)
 	}
 
 	CView::OnTimer(nIDEvent);
+}
+
+void CTetrisView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	CTetrisDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	CDC* pDC = GetDC();
+
+	if (pDoc->mGameStatus == 1) {
+
+		if (nChar == VK_DOWN) {
+			pDoc->DropBlock(&pDoc->curBlock, pDC);
+			Invalidate(FALSE);
+		}
+		if (nChar == VK_LEFT) {
+			pDoc->MoveBlockDirectionX(&pDoc->curBlock, 1, pDC);
+			Invalidate(FALSE);
+		}
+		if(nChar == VK_RIGHT){
+			pDoc->MoveBlockDirectionX(&pDoc->curBlock, 2, pDC);
+			Invalidate(FALSE);
+		}
+
+	}
+	CView::OnKeyDown(nChar, nRepCnt, nFlags);
 }
