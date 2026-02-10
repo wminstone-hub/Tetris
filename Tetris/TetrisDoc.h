@@ -35,6 +35,7 @@ public:
 	int mScore;                 // 점수
 	int mLevel;                 // 현재 레벨
 	int mTimer = 0;					// 게임진행시간
+	CString mTimerStr;				// 게임진행시간 문자열
 	int mGameStatus = 0;             // 게임 상태 (타이틀: 0, 진행중: 1, 일시정지: 2, 게임오버: 3)
 
 	//미노 블록 랜덤 생성 관련 변수
@@ -136,4 +137,5 @@ public:
 	void EmbedBlock(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, CDC* pDC);
 	void EraseOneLine(CDC* pDC);
 	void RenderBoard(CDC* pDC);
+	CString TimerFormet(int m_Timer);
 };

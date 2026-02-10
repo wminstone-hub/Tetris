@@ -543,6 +543,7 @@ void CTetrisDoc::RenderBoard(CDC* pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
 
+}
 // 분:초 형식 변환 함수
 CString CTetrisDoc::TimerFormet(int m_Timer)
 {

@@ -74,8 +74,8 @@ void CTetrisView::OnDraw(CDC* pDC)
 	}
 
 	if (pDoc->mGameStatus == 1) {
-		mTimerStr.Format(_T("%d"), pDoc->mTimer);
-		pDC->TextOutW(680, 125, mTimerStr);
+		pDoc->mTimerStr.Format(_T("%d"), pDoc->mTimer);
+		pDC->TextOutW(680, 125, pDoc->mTimerStr);
 	}
 }
 
@@ -216,7 +216,9 @@ void CTetrisView::OnTimer(UINT_PTR nIDEvent)
 	if (!pDoc)
 		return;
 
-	switch (pDoc->mGameStaus) {
+	CDC* pDC = GetDC();
+
+	switch (pDoc->mGameStatus) {
 	case 0: //타이틀 화면
 		break;
 
