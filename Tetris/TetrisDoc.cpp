@@ -387,6 +387,7 @@ int CTetrisDoc::DropBlock(Block* curBlock, CDC* pDC)
 	return 0;
 }
 
+
 int CTetrisDoc::MoveBlockDirectionX(Block* curBlock, int direction, CDC* pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
@@ -412,36 +413,348 @@ int CTetrisDoc::MoveBlockDirectionX(Block* curBlock, int direction, CDC* pDC)
 	return 0;
 }
 
-// 충돌 검사 함수 (dir == 0 : 아래, dir == 1 : 왼쪽, dir == 2 : 오른쪽)
-int CTetrisDoc::CheckCollision(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, int direction)
+
+int CTetrisDoc::RotateBlock(Block* curBlock, CDC* pDC)
 {
-	// TODO: 여기에 구현 코드 추가
-	switch (direction) {
-		case 0: //아래 충돌 검사
-			for( int i = 0; i < 4; i++) {
-				if (boardStatus[curBlock.tile[i].y + 1][curBlock.tile[i].x] != 0) {
-					return 1; //충돌 발생
-				}
-			}
-			return 0; //충돌 없음
-		case 1: //왼쪽 충돌 검사
-			for (int i = 0; i < 4; i++) {
-				if (boardStatus[curBlock.tile[i].y][curBlock.tile[i].x - 1] != 0) {
-					return 1; //충돌 발생
-				}
-			}
-			return 0; //충돌 없음
-		case 2: //오른쪽 충돌 검사
-			for (int i = 0; i < 4; i++) {
-				if (boardStatus[curBlock.tile[i].y][curBlock.tile[i].x + 1] != 0) {
-					return 1; //충돌 발생
-				}
-			}
-			return 0; //충돌 없음
-		default:
-			return -1; //오류
+	// TODO: 여기에 구현 코드 추가.
+	switch (CheckCollision(boardStatus, *curBlock, 3)) {
+	case 0: // 회전가능하면~
+		PaintBlock(*curBlock, pDC); //이전 블록 지우기
+		*curBlock = bufferBlock; //버퍼에 저장된 회전된 블록 정보로 교체
+		PaintBlock(*curBlock, curBlock->blockColor, pDC); //새로운 블록 그리기
+		return 0;
+
+	case 1: // 충돌 발생하면~
+		return 1;
+
+	default:
+		return -1; //오류
 	}
 }
+
+
+
+// 충돌 검사 함수 (dir == 0 : 아래, dir == 1 : 왼쪽, dir == 2 : 오른쪽)
+// curBlock 변수명 왜이래 지역변수잖아!!!!!!!!!!!!!!!
+// curBlock 변수명 왜이래 지역변수잖아!!!!!!!!!!!!!!!
+// curBlock 변수명 왜이래 지역변수잖아!!!!!!!!!!!!!!!
+// curBlock 변수명 왜이래 지역변수잖아!!!!!!!!!!!!!!!
+// curBlock 변수명 왜이래 지역변수잖아!!!!!!!!!!!!!!!
+// curBlock 변수명 왜이래 지역변수잖아!!!!!!!!!!!!!!!
+// curBlock 변수명 왜이래 지역변수잖아!!!!!!!!!!!!!!!
+int CTetrisDoc::CheckCollision(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, int mod)
+{
+	// TODO: 여기에 구현 코드 추가
+	switch (mod) {
+	case 0: //아래 충돌 검사
+		for (int i = 0; i < 4; i++) {
+			if (boardStatus[curBlock.tile[i].y + 1][curBlock.tile[i].x] != 0) {
+				return 1; //충돌 발생
+			}
+		}
+		return 0; //충돌 없음
+
+	case 1: //왼쪽 충돌 검사
+		for (int i = 0; i < 4; i++) {
+			if (boardStatus[curBlock.tile[i].y][curBlock.tile[i].x - 1] != 0) {
+				return 1; //충돌 발생
+			}
+		}
+		return 0; //충돌 없음
+
+	case 2: //오른쪽 충돌 검사
+		for (int i = 0; i < 4; i++) {
+			if (boardStatus[curBlock.tile[i].y][curBlock.tile[i].x + 1] != 0) {
+				return 1; //충돌 발생
+			}
+		}
+		return 0; //충돌 없음
+
+	case 3: // 시계방향 회전 충돌 검사
+
+		switch (curBlock.blockType) {
+
+		case 0: // I형블록
+			switch (curBlock.blockRotateState) {
+			case '0'://0->R
+				curBlock.tile[0].x += 1; curBlock.tile[0].y -= 1;
+				curBlock.tile[1].x += 0; curBlock.tile[1].y += 0;
+				curBlock.tile[2].x -= 1; curBlock.tile[2].y += 1;
+				curBlock.tile[3].x -= 2; curBlock.tile[3].y += 2;
+				curBlock.blockRotateState = 'R';
+				break;
+			case 'R'://R->2
+				curBlock.tile[0].x -= 2; curBlock.tile[0].y += 1;
+				curBlock.tile[1].x -= 1; curBlock.tile[1].y += 0;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y -= 1;
+				curBlock.tile[3].x += 1; curBlock.tile[3].y -= 2;
+				curBlock.blockRotateState = '2';
+				break;
+			case '2'://2->L
+				curBlock.tile[0].x += 2; curBlock.tile[0].y -= 2;
+				curBlock.tile[1].x += 1; curBlock.tile[1].y -= 1;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x -= 1; curBlock.tile[3].y += 1;
+				curBlock.blockRotateState = 'L';
+				break;
+			case 'L'://L->0
+				curBlock.tile[0].x -= 1; curBlock.tile[0].y += 2;
+				curBlock.tile[1].x -= 0; curBlock.tile[1].y += 1;
+				curBlock.tile[2].x += 1; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x += 2; curBlock.tile[3].y -= 1;
+				curBlock.blockRotateState = '0';
+				break;
+			}
+			break;
+
+			
+		case 1: // O형블록
+			//O형블록은 회전해도 모양이 변하지 않음
+			break;
+
+
+		case 2: // T형블록
+			switch (curBlock.blockRotateState) {
+			case '0': //0->R
+				curBlock.tile[0].x += 1; curBlock.tile[0].y += 1;
+				curBlock.tile[1].x += 1; curBlock.tile[1].y -= 1;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x -= 1; curBlock.tile[3].y += 1;
+				curBlock.blockRotateState = 'R';
+				break;
+			case 'R': //R->2
+				curBlock.tile[0].x -= 1; curBlock.tile[0].y += 1;
+				curBlock.tile[1].x += 1; curBlock.tile[1].y += 1;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x -= 1; curBlock.tile[3].y -= 1;
+				curBlock.blockRotateState = '2';
+				break;
+			case '2': //2->L
+				curBlock.tile[0].x -= 1; curBlock.tile[0].y -= 1;
+				curBlock.tile[1].x -= 1; curBlock.tile[1].y += 1;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x += 1; curBlock.tile[3].y -= 1;
+				curBlock.blockRotateState = 'L';
+				break;
+			case 'L': //L->0
+				curBlock.tile[0].x += 1; curBlock.tile[0].y -= 1;
+				curBlock.tile[1].x -= 1; curBlock.tile[1].y -= 1;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x += 1; curBlock.tile[3].y += 1;
+				curBlock.blockRotateState = '0';
+				break;
+			}
+			break;
+
+			
+		case 3: // J형블록
+			switch (curBlock.blockRotateState) {
+			case '0': //0->R
+				curBlock.tile[0].x += 2; curBlock.tile[0].y += 0;
+				curBlock.tile[1].x += 1; curBlock.tile[1].y -= 1;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x -= 1; curBlock.tile[3].y += 1;
+				curBlock.blockRotateState = 'R';
+				break;
+			case 'R': //R->2
+				curBlock.tile[0].x += 0; curBlock.tile[0].y += 2;
+				curBlock.tile[1].x += 1; curBlock.tile[1].y += 1;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x -= 1; curBlock.tile[3].y -= 1;
+				curBlock.blockRotateState = '2';
+				break;
+			case '2': //2->L
+				curBlock.tile[0].x -= 2; curBlock.tile[0].y += 0;
+				curBlock.tile[1].x -= 1; curBlock.tile[1].y += 1;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x += 1; curBlock.tile[3].y -= 1;
+				curBlock.blockRotateState = 'L';
+				break;
+			case 'L': //L->0
+				curBlock.tile[0].x += 0; curBlock.tile[0].y -= 2;
+				curBlock.tile[1].x -= 1; curBlock.tile[1].y -= 1;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x += 1; curBlock.tile[3].y += 1;
+				curBlock.blockRotateState = '0';
+				break;
+			}
+			break;
+
+			
+		case 4: // L형블록
+			switch (curBlock.blockRotateState) {
+			case '0': //0->R
+				curBlock.tile[0].x += 0; curBlock.tile[0].y += 2;
+				curBlock.tile[1].x += 1; curBlock.tile[1].y -= 1;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x -= 1; curBlock.tile[3].y += 1;
+				curBlock.blockRotateState = 'R';
+				break;
+			case 'R': //R->2
+				curBlock.tile[0].x -= 2; curBlock.tile[0].y += 0;
+				curBlock.tile[1].x += 1; curBlock.tile[1].y += 1;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x -= 1; curBlock.tile[3].y -= 1;
+				curBlock.blockRotateState = '2';
+				break;
+			case '2': //2->L
+				curBlock.tile[0].x += 0; curBlock.tile[0].y -= 2;
+				curBlock.tile[1].x -= 1; curBlock.tile[1].y += 1;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x += 1; curBlock.tile[3].y -= 1;
+				curBlock.blockRotateState = 'L';
+				break;
+			case 'L': //L->0
+				curBlock.tile[0].x += 2; curBlock.tile[0].y += 0;
+				curBlock.tile[1].x -= 1; curBlock.tile[1].y -= 1;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x += 1; curBlock.tile[3].y += 1;
+				curBlock.blockRotateState = '0';
+				break;
+			}
+			break;
+
+
+
+			
+		case 5: // Z형블록
+			switch (curBlock.blockRotateState) {
+			case '0': //0->R
+				curBlock.tile[0].x += 2; curBlock.tile[0].y += 0;
+				curBlock.tile[1].x += 1; curBlock.tile[1].y += 1;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x -= 1; curBlock.tile[3].y += 1;
+				curBlock.blockRotateState = 'R';
+				break;
+			case 'R': //R->2
+				curBlock.tile[0].x += 0; curBlock.tile[0].y += 2;
+				curBlock.tile[1].x -= 1; curBlock.tile[1].y += 1;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x -= 1; curBlock.tile[3].y -= 1;
+				curBlock.blockRotateState = '2';
+				break;
+			case '2': //2->L
+				curBlock.tile[0].x -= 2; curBlock.tile[0].y += 0;
+				curBlock.tile[1].x -= 1; curBlock.tile[1].y -= 1;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x += 1; curBlock.tile[3].y -= 1;
+				curBlock.blockRotateState = 'L';
+				break;
+			case 'L': //L->0
+				curBlock.tile[0].x += 0; curBlock.tile[0].y -= 2;
+				curBlock.tile[1].x += 1; curBlock.tile[1].y -= 1;
+				curBlock.tile[2].x += 0; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x += 1; curBlock.tile[3].y += 1;
+				curBlock.blockRotateState = '0';
+				break;
+			}
+			break;
+
+		
+		case 6: // S형블록
+			switch (curBlock.blockRotateState) {
+			case '0': //0->R
+				curBlock.tile[0].x += 0; curBlock.tile[0].y += 0;
+				curBlock.tile[1].x -= 1; curBlock.tile[1].y += 1;
+				curBlock.tile[2].x += 2; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x += 1; curBlock.tile[3].y += 1;
+				curBlock.blockRotateState = 'R';
+				break;
+			case 'R': //R->2
+				curBlock.tile[0].x += 0; curBlock.tile[0].y += 1;
+				curBlock.tile[1].x += 1; curBlock.tile[1].y += 0;
+				curBlock.tile[2].x -= 2; curBlock.tile[2].y += 1;
+				curBlock.tile[3].x -= 1; curBlock.tile[3].y += 0;
+				curBlock.blockRotateState = '2';
+				break;
+			case '2': //2->L
+				curBlock.tile[0].x -= 1; curBlock.tile[0].y -= 1;
+				curBlock.tile[1].x -= 2; curBlock.tile[1].y += 0;
+				curBlock.tile[2].x += 1; curBlock.tile[2].y -= 1;
+				curBlock.tile[3].x += 0; curBlock.tile[3].y += 0;
+				curBlock.blockRotateState = 'L';
+				break;
+			case 'L': //L->0
+				curBlock.tile[0].x += 1; curBlock.tile[0].y += 0;
+				curBlock.tile[1].x += 2; curBlock.tile[1].y -= 1;
+				curBlock.tile[2].x -= 1; curBlock.tile[2].y += 0;
+				curBlock.tile[3].x += 0; curBlock.tile[3].y -= 1;
+				curBlock.blockRotateState = '0';
+				break;
+			}
+			break;
+			
+		default:
+			return -1;
+		}
+		return CheckWallKick(boardStatus, curBlock, &bufferBlock); //월킥 포합 회전가능여부 체크
+
+
+	case 4: // 기본충돌 검사 // 오... 결합도 좆됫는데?
+		for (int i = 0; i < 4; i++) {
+			if (boardStatus[curBlock.tile[i].y][curBlock.tile[i].x] != 0) {
+				return 1; //충돌 발생
+			}
+		}
+		return 0; //충돌 없음
+
+	default:
+		return -1; //오류
+	}
+
+}
+
+
+int CTetrisDoc::CheckWallKick(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block block, Block* bufferBlock)
+{
+	// TODO: 여기에 구현 코드 추가.
+
+	Block orgBlock = block; //원본위치저장
+
+	switch (block.blockType) {
+	case 0: //I형블록
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 4; j++) {
+				block.tile[j].x = orgBlock.tile[j].x + wallKickData_I[block.blockRotateState][i].x;
+				block.tile[j].y = orgBlock.tile[j].y + wallKickData_I[block.blockRotateState][i].y;
+			}
+			if (CheckCollision(boardStatus, block, 4) == 0) { // 충돌없으면
+				*bufferBlock = block; // 전역변수에 지역변수 저장
+				return 0;
+			}
+		}
+		return 1; // 월킥 실패 회전불가
+		break;
+
+	case 1: //O형블록
+		// O형 블록은 Wall Kick 불필요
+		break;
+
+	case 2: //T형블록
+	case 3: //J형블록
+	case 4: //L형블록
+	case 5: //Z형블록
+	case 6: //S형블록
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 4; j++) {
+				block.tile[j].x = orgBlock.tile[j].x + wallKickData_JLSTZ[block.blockRotateState][i].x;
+				block.tile[j].y = orgBlock.tile[j].y + wallKickData_JLSTZ[block.blockRotateState][i].y;
+			}
+			if (CheckCollision(boardStatus, block, 4) == 0) { // 충돌없으면
+				*bufferBlock = block; // 전역변수에 지역변수 저장
+				return 0;
+			}
+		}
+		return 1; // 월킥 실패 회전불가
+		break;
+
+	default:
+		return -1;
+	}
+}
+
+
+
 
 void CTetrisDoc::EmbedBlock(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, CDC* pDC)
 {
@@ -538,6 +851,9 @@ void CTetrisDoc::EraseOneLine(CDC* pDC)
 		}
 	}
 }
+
+
+
 
 void CTetrisDoc::RenderBoard(CDC* pDC)
 {

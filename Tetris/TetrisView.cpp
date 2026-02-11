@@ -74,8 +74,9 @@ void CTetrisView::OnDraw(CDC* pDC)
 	}
 
 	if (pDoc->mGameStatus == 1) {
-		pDoc->mTimerStr.Format(_T("%d"), pDoc->mTimer);
-		pDC->TextOutW(680, 125, pDoc->mTimerStr);
+		//pDoc->mTimerStr.Format(_T("%d"), pDoc->mTimer);
+		
+		pDC->TextOutW(680, 125, pDoc->TimerFormet(pDoc->mTimer));
 	}
 }
 
@@ -253,6 +254,10 @@ void CTetrisView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	if (pDoc->mGameStatus == 1) {
 
+		if (nChar == VK_UP) {
+			pDoc->RotateBlock(&pDoc->curBlock, pDC);
+			Invalidate(FALSE);
+		}
 		if (nChar == VK_DOWN) {
 			pDoc->DropBlock(&pDoc->curBlock, pDC);
 			Invalidate(FALSE);
