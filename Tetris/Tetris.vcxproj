@@ -208,6 +208,7 @@
     <ResourceCompile Include="Tetris.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\BlockS.bmp" />
     <Image Include="res\Tetris.ico" />
     <Image Include="res\TetrisDoc.ico" />
     <Image Include="res\Toolbar.bmp" />

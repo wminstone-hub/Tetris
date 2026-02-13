@@ -5,6 +5,7 @@
 #include "pch.h"
 #include "framework.h"
 #include <string>
+#include <atlimage.h>
 // SHARED_HANDLERS는 미리 보기, 축소판 그림 및 검색 필터 처리기를 구현하는 ATL 프로젝트에서 정의할 수 있으며
 // 해당 프로젝트와 문서 코드를 공유하도록 해 줍니다.
 #ifndef SHARED_HANDLERS
@@ -75,11 +76,15 @@ void CTetrisView::OnDraw(CDC* pDC)
 		pDoc->mScoreStr.Empty();
 		pDoc->mScoreStr.Format(_T("%d"), pDoc->mScore);
 		pDC->TextOutW(80, 250, pDoc->mScoreStr);
+		CImage image;
+		image.Load(_T("BlockS.bmp"));
+		image.Draw(pDC->m_hDC, 30, 80);
 	}
 
 	if (pDoc->mGameStatus == 1) {
 		pDC->TextOutW(680, 125, pDoc->TimerFormet(pDoc->mTimer));
 		pDC->TextOutW(80, 250, pDoc->mScoreStr);
+
 	}
 }
 
