@@ -223,6 +223,7 @@ void CTetrisDoc::CreateUI(CDC* pDC)
 	// 점수판 칸
 	pDC->Rectangle(10, 233, 168, 295);
 	pDC->TextOutW(65, 210, _T("SCORE"));
+
 	// 타이머 칸
 	pDC->Rectangle(600, 100, 775, 160);
 	pDC->TextOutW(672, 78, _T("TIMER"));
@@ -387,6 +388,32 @@ int CTetrisDoc::DropBlock(Block* curBlock, CDC* pDC)
 	return 0;
 }
 
+int CTetrisDoc::HardDropBlock(Block* curBlock, CDC* pDC)
+{
+	// TODO: 여기에 구현 코드 추가.
+	Block tempBlock = *curBlock;
+
+	while (1) {
+		for (int i = 0; i < 4; i++) {
+			tempBlock.tile[i].y += 1; //블록 한 칸 아래로 이동
+		}
+		if (CheckCollision(boardStatus, tempBlock, 4) == 1) {
+			for (int i = 0; i < 4; i++) {
+				tempBlock.tile[i].y -= 1; //블록 한 칸 위로 이동
+			}
+			break;
+		}
+	}
+
+	PaintBlock(*curBlock, pDC); // 이전 블록 지우기
+	*curBlock = tempBlock;
+	PaintBlock(*curBlock, curBlock->blockColor, pDC); // 새로운 블록 그리기
+	EmbedBlock(boardStatus, *curBlock, pDC); // 없으면 내리고 회전가능함
+
+	return 0;
+}
+
+
 
 int CTetrisDoc::MoveBlockDirectionX(Block* curBlock, int direction, CDC* pDC)
 {
@@ -434,14 +461,7 @@ int CTetrisDoc::RotateBlock(Block* curBlock, CDC* pDC)
 
 
 
-// 충돌 검사 함수 (dir == 0 : 아래, dir == 1 : 왼쪽, dir == 2 : 오른쪽)
-// curBlock 변수명 왜이래 지역변수잖아!!!!!!!!!!!!!!!
-// curBlock 변수명 왜이래 지역변수잖아!!!!!!!!!!!!!!!
-// curBlock 변수명 왜이래 지역변수잖아!!!!!!!!!!!!!!!
-// curBlock 변수명 왜이래 지역변수잖아!!!!!!!!!!!!!!!
-// curBlock 변수명 왜이래 지역변수잖아!!!!!!!!!!!!!!!
-// curBlock 변수명 왜이래 지역변수잖아!!!!!!!!!!!!!!!
-// curBlock 변수명 왜이래 지역변수잖아!!!!!!!!!!!!!!!
+// 충돌 검사 함수 (mod == 0 : 아래, mod == 1 : 왼쪽, mod == 2 : 오른쪽, mod == 3 : 회전, mod == 4 : 단순)
 int CTetrisDoc::CheckCollision(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, int mod)
 {
 	// TODO: 여기에 구현 코드 추가
@@ -848,6 +868,8 @@ void CTetrisDoc::EraseOneLine(CDC* pDC)
 			}
 			//점수 증가
 			mScore += 100;
+			mScoreStr.Empty();
+			mScoreStr.Format(_T("%d"), mScore);
 		}
 	}
 }
@@ -871,3 +893,4 @@ CString CTetrisDoc::TimerFormet(int m_Timer)
 
 	return mMin + _T(" : ") + mSec;
 }
+

@@ -71,12 +71,15 @@ void CTetrisView::OnDraw(CDC* pDC)
 	if (pDoc->mGameStatus == 0) {
 		pDoc->CreateUI(pDC);
 		pDoc->DrawBoard(pDC);
+		pDoc->mScore = 0;
+		pDoc->mScoreStr.Empty();
+		pDoc->mScoreStr.Format(_T("%d"), pDoc->mScore);
+		pDC->TextOutW(80, 250, pDoc->mScoreStr);
 	}
 
 	if (pDoc->mGameStatus == 1) {
-		//pDoc->mTimerStr.Format(_T("%d"), pDoc->mTimer);
-		
 		pDC->TextOutW(680, 125, pDoc->TimerFormet(pDoc->mTimer));
+		pDC->TextOutW(80, 250, pDoc->mScoreStr);
 	}
 }
 
@@ -268,6 +271,10 @@ void CTetrisView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		}
 		if(nChar == VK_RIGHT){
 			pDoc->MoveBlockDirectionX(&pDoc->curBlock, 2, pDC);
+			Invalidate(FALSE);
+		}
+		if (nChar == VK_SPACE) {
+			pDoc->HardDropBlock(&pDoc->curBlock, pDC);
 			Invalidate(FALSE);
 		}
 

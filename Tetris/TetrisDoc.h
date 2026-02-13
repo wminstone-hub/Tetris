@@ -35,6 +35,7 @@ public:
 	int mNextBlockType;         // 다음 블록 종류
 	int mCurrentRotation;       // 현재 블록 회전 상태
 	int mScore;                 // 점수
+	CString mScoreStr;          // 점수 문자열
 	int mLevel;                 // 현재 레벨
 	int mTimer = 0;					// 게임진행시간
 	CString mTimerStr;				// 게임진행시간 문자열
@@ -170,4 +171,5 @@ public:
 	CString TimerFormet(int m_Timer);
 	int RotateBlock(Block* curBlock, CDC* pDC);
 	int CheckWallKick(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, Block* bufferBlock);
+	int HardDropBlock(Block* curBlock, CDC* pDC);
 };
