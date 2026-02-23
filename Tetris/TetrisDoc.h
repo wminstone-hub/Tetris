@@ -34,6 +34,7 @@ public:
 	int mBlockType;				// 현재 블록 종류
 	int mNextBlockType;         // 다음 블록 종류
 	int mCurrentRotation;       // 현재 블록 회전 상태
+	int mHoldFlag = 0;				// 홀드 사용 여부
 	int mScore;                 // 점수
 	CString mScoreStr;          // 점수 문자열
 	int mLevel;                 // 현재 레벨
@@ -118,6 +119,9 @@ public:
 	//임시블럭
 	Block bufferBlock;
 
+	//홀드 블럭
+	int holdBlock = -1;
+		
 // 작업입니다.
 public:
 
@@ -152,8 +156,10 @@ public:
 	//초기화 함수들
 	void InitBoardStatus();
 	void InitBlockBox(std::vector<int>& blockBox);
+	void initGameStatus();
 	//게임 상태 관련 함수들
 	int IsGameOvered(CDC* pDC);
+	CString TimerFormet(int m_Timer);
 	//랜덤 블록 생성 함수 (7-bag)
 	void shuffleBox();
 	int nextBlock();
@@ -165,14 +171,15 @@ public:
 	void PaintBlock(Block block, CDC* pDC);
 	//블록 동작 관련 함수들
 	void CreateBlock(CDC* pDC);
+	void CTetrisDoc::CreateBlock(int blockType, CDC* pDC);
 	int DropBlock(Block* curBlock, CDC* pDC);
 	int MoveBlockDirectionX(Block* curBlock, int direction, CDC* pDC);
 	int CheckCollision(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, int mod);
 	void EmbedBlock(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, CDC* pDC);
 	void EraseOneLine(CDC* pDC);
 	void RenderBoard(CDC* pDC);
-	CString TimerFormet(int m_Timer);
 	int RotateBlock(Block* curBlock, CDC* pDC);
 	int CheckWallKick(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, Block* bufferBlock);
 	int HardDropBlock(Block* curBlock, CDC* pDC);
+	void HoldBlock(CDC* pDC);
 };
