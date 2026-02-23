@@ -35,6 +35,7 @@ CTetrisDoc::CTetrisDoc() noexcept
 
 	InitBoardStatus();
 	InitBlockBox(blockBox);
+	initGameStatus();
 	
 
 }
@@ -168,6 +169,13 @@ void CTetrisDoc::InitBlockBox(std::vector<int>& blockBox)
 	shuffleBox();
 }
 
+void CTetrisDoc::initGameStatus()
+{
+	// TODO: 여기에 구현 코드 추가.
+	mBlockType = nextBlock(); //현재 블록 종류 결정
+	mNextBlockType = nextBlock(); //다음 블록 종류 결정
+}
+
 //////////////////////////////////////////////게임 상태 관련 함수들
 
 int CTetrisDoc::IsGameOvered(CDC* pDC)
@@ -220,14 +228,25 @@ void CTetrisDoc::CreateUI(CDC* pDC)
 	// 다음 블록 표시 칸
 	pDC->Rectangle(10, 40, 168, 198);
 	pDC->TextOutW(50, 20, _T("NEXT BRICK"));
+	// 홀드 블록 표시 칸
+	pDC->Rectangle(602, 40, 760, 198);
+	pDC->TextOutW(645, 20, _T("HOLD BRICK"));
 	// 점수판 칸
 	pDC->Rectangle(10, 233, 168, 295);
 	pDC->TextOutW(65, 210, _T("SCORE"));
 
 	// 타이머 칸
-	pDC->Rectangle(600, 100, 775, 160);
-	pDC->TextOutW(672, 78, _T("TIMER"));
-	pDC->TextOutW(680, 125, TimerFormet(mTimer));
+	pDC->Rectangle(602, 233, 760, 295);
+	pDC->TextOutW(662, 210, _T("TIMER"));
+
+	pDC->TextOutW(620, 700, _T("Dir Left : Move Left"));
+	pDC->TextOutW(620, 720, _T("Dir Right : Move Right"));
+	pDC->TextOutW(620, 740, _T("Dir Down : Fast Drop"));
+	pDC->TextOutW(620, 760, _T("Dir Up : Rotate Right"));
+	pDC->TextOutW(620, 780, _T("Space : Hard Drop"));
+	pDC->TextOutW(620, 800, _T("Right Shift : Hold"));
+
+
 
 	pDC->SelectObject(pOldPen);
 
@@ -335,14 +354,13 @@ void CTetrisDoc::PaintBlock(Block block, CDC* pDC)
 void CTetrisDoc::CreateBlock(CDC* pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
-	
 
 	if (IsGameOvered(pDC)) {//게임 오버 검사
 		return;
 	}
 	
 	//현재 블록 설정
-	switch (nextBlock()) {
+	switch (mBlockType) {
 		case 0:
 			curBlock = blockType0;
 			break;
@@ -366,6 +384,45 @@ void CTetrisDoc::CreateBlock(CDC* pDC)
 			break;
 		default:
 			break;
+	}
+	PaintBlock(curBlock, curBlock.blockColor, pDC);
+	mBlockType = mNextBlockType; //다음 블록을 현재 블록으로 설정
+	mNextBlockType = nextBlock(); //다음 블록 종류 결정
+	return;
+}
+
+//홀드 블럭 생성 함수 오버로드
+void CTetrisDoc::CreateBlock(int blockType, CDC* pDC) {
+	
+	if (IsGameOvered(pDC)) {//게임 오버 검사
+		return;
+	}
+
+	//현재 블록 설정
+	switch (blockType) {
+	case 0:
+		curBlock = blockType0;
+		break;
+	case 1:
+		curBlock = blockType1;
+		break;
+	case 2:
+		curBlock = blockType2;
+		break;
+	case 3:
+		curBlock = blockType3;
+		break;
+	case 4:
+		curBlock = blockType4;
+		break;
+	case 5:
+		curBlock = blockType5;
+		break;
+	case 6:
+		curBlock = blockType6;
+		break;
+	default:
+		break;
 	}
 	PaintBlock(curBlock, curBlock.blockColor, pDC);
 	return;
@@ -710,7 +767,7 @@ int CTetrisDoc::CheckCollision(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Bloc
 		return CheckWallKick(boardStatus, curBlock, &bufferBlock); //월킥 포합 회전가능여부 체크
 
 
-	case 4: // 기본충돌 검사 // 오... 결합도 좆됫는데?
+	case 4: // 기본충돌 검사
 		for (int i = 0; i < 4; i++) {
 			if (boardStatus[curBlock.tile[i].y][curBlock.tile[i].x] != 0) {
 				return 1; //충돌 발생
@@ -784,7 +841,26 @@ void CTetrisDoc::EmbedBlock(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block c
 	}
 	PaintBlock(curBlock, curBlock.blockColor, pDC); // 블록 그리기
 	EraseOneLine(pDC); //라인 지우기 검사 및 처리
+	mHoldFlag = 0; //홀드 초기화
 	return;
+}
+
+void CTetrisDoc::HoldBlock(CDC* pDC)
+{
+	// TODO: 여기에 구현 코드 추가.
+	if (holdBlock == -1) {
+		holdBlock = curBlock.blockType;
+		PaintBlock(curBlock, pDC); //현재 블록 지우기
+		CreateBlock(pDC);
+	}
+	else {
+		PaintBlock(curBlock, pDC); //현재 블록 지우기
+		int temp = holdBlock; //홀드 블록 임시 저장
+		holdBlock = curBlock.blockType;
+		CreateBlock(temp, pDC); //홀드 블록 생성
+		
+	}
+	mHoldFlag = 1; //홀드 사용 표시
 }
 
 void CTetrisDoc::EraseOneLine(CDC* pDC)

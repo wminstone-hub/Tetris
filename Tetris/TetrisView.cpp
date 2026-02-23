@@ -273,6 +273,12 @@ void CTetrisView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			pDoc->MoveBlockDirectionX(&pDoc->curBlock, 2, pDC);
 			Invalidate(FALSE);
 		}
+		if (nChar == VK_SHIFT) {
+			if (pDoc->mHoldFlag == 0) {
+				pDoc->HoldBlock(pDC);
+				Invalidate(FALSE);
+			}
+		}
 		if (nChar == VK_SPACE) {
 			pDoc->HardDropBlock(&pDoc->curBlock, pDC);
 			Invalidate(FALSE);
