@@ -205,6 +205,16 @@ void CTetrisView::OnPauseBtnClicked()
 	GetDlgItem(102)->ShowWindow(SW_SHOWNORMAL);
 	GetDlgItem(104)->EnableWindow(TRUE);
 	GetDlgItem(102)->EnableWindow(TRUE);
+
+
+	CTetrisDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+
+	pDoc->mGameStatus = 2; //일시정지 상태로 변경
+
+
 }
 
 void CTetrisView::OnResumeBtnClicked()
@@ -214,6 +224,12 @@ void CTetrisView::OnResumeBtnClicked()
 	GetDlgItem(102)->ShowWindow(SW_HIDE);
 	GetDlgItem(104)->EnableWindow(FALSE);
 	GetDlgItem(102)->EnableWindow(FALSE);
+
+	CTetrisDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	pDoc->mGameStatus = 1; //게임 진행 상태로 변경
 
 }
 
