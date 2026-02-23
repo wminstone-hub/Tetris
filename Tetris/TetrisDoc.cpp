@@ -145,6 +145,11 @@ void CTetrisDoc::Dump(CDumpContext& dc) const
 void CTetrisDoc::InitBoardStatus()
 {
 	// TODO: 여기에 구현 코드 추가.
+	for (int i = 0; i < BOARD_HEIGHT + CEILING_HEIGHT + FLOOR_HEIGHT; i++) {
+		for (int j = 0; j < BOARD_WIDTH + WALL_WIDTH; j++) {
+			boardStatus[i][j] = 0;
+		}
+	}
 	for (int i = 0; i < BOARD_HEIGHT + CEILING_HEIGHT; i++) {
 		boardStatus[i][0] = -1; //왼쪽 벽
 		boardStatus[i][BOARD_WIDTH + WALL_WIDTH - 1] = -1; //오른쪽 벽
@@ -172,6 +177,8 @@ void CTetrisDoc::InitBlockBox(std::vector<int>& blockBox)
 void CTetrisDoc::initGameStatus()
 {
 	// TODO: 여기에 구현 코드 추가.
+
+	mTimer = 0;
 	mBlockType = nextBlock(); //현재 블록 종류 결정
 	mNextBlockType = nextBlock(); //다음 블록 종류 결정
 }
@@ -185,7 +192,7 @@ int CTetrisDoc::IsGameOvered(CDC* pDC)
 		if (boardStatus[1][i] != 0) {
 			//게임 오버 처리
 			mGameStatus = 3; //게임오버 상태로 변경
-			pDC->TextOutW(300, 300, _T("Game Over"));
+			pDC->TextOutW(340, 300, _T("Game Over"));
 			return 1;
 		}
 	}
@@ -226,18 +233,18 @@ void CTetrisDoc::CreateUI(CDC* pDC)
 	pDC->MoveTo(588, 0);
 	pDC->LineTo(588, 1000);
 	// 다음 블록 표시 칸
-	pDC->Rectangle(10, 40, 168, 198);
-	pDC->TextOutW(50, 20, _T("NEXT BRICK"));
+	pDC->Rectangle(10, 80, 168, 238);
+	pDC->TextOutW(50, 60, _T("NEXT BRICK"));
 	// 홀드 블록 표시 칸
-	pDC->Rectangle(602, 40, 760, 198);
-	pDC->TextOutW(645, 20, _T("HOLD BRICK"));
+	pDC->Rectangle(602, 80, 760, 238);
+	pDC->TextOutW(645, 60, _T("HOLD BRICK"));
 	// 점수판 칸
-	pDC->Rectangle(10, 233, 168, 295);
-	pDC->TextOutW(65, 210, _T("SCORE"));
+	pDC->Rectangle(10, 263, 168, 325);
+	pDC->TextOutW(65, 240, _T("SCORE"));
 
 	// 타이머 칸
-	pDC->Rectangle(602, 233, 760, 295);
-	pDC->TextOutW(662, 210, _T("TIMER"));
+	pDC->Rectangle(602, 273, 760, 335);
+	pDC->TextOutW(662, 250, _T("TIMER"));
 
 	pDC->TextOutW(620, 700, _T("Dir Left : Move Left"));
 	pDC->TextOutW(620, 720, _T("Dir Right : Move Right"));
@@ -358,43 +365,54 @@ void CTetrisDoc::CreateBlock(CDC* pDC)
 	if (IsGameOvered(pDC)) {//게임 오버 검사
 		return;
 	}
-	
+
+	mNextBlockImage.Destroy();
+	switch (mNextBlockType) {
+		case 0:
+			mNextBlockImage.Load(_T("res\\BlockI.bmp"));
+			break;
+		case 1:
+			mNextBlockImage.Load(_T("res\\BlockO.bmp"));
+			break;
+		case 2:
+			mNextBlockImage.Load(_T("res\\BlockT.bmp"));
+			break;
+		case 3:
+			mNextBlockImage.Load(_T("res\\BlockJ.bmp"));
+			break;
+		case 4:
+			mNextBlockImage.Load(_T("res\\BlockL.bmp"));
+			break;
+		case 5:
+			mNextBlockImage.Load(_T("res\\BlockZ.bmp"));
+			break;
+		case 6:
+			mNextBlockImage.Load(_T("res\\BlockS.bmp"));
+			break;
+	}
+
 	//현재 블록 설정
 	switch (mBlockType) {
 		case 0:
 			curBlock = blockType0;
-			mBlockImage.Destroy();
-			mBlockImage.Load(_T("res\\BlockI.bmp"));
 			break;
 		case 1:
 			curBlock = blockType1;
-			mBlockImage.Destroy();
-			mBlockImage.Load(_T("res\\BlockO.bmp"));
 			break;
 		case 2:
 			curBlock = blockType2;
-			mBlockImage.Destroy();
-			mBlockImage.Load(_T("res\\BlockT.bmp"));
 			break;
 		case 3:
 			curBlock = blockType3;
-			mBlockImage.Destroy();
-			mBlockImage.Load(_T("res\\BlockJ.bmp"));
 			break;
 		case 4:
 			curBlock = blockType4;
-			mBlockImage.Destroy();
-			mBlockImage.Load(_T("res\\BlockL.bmp"));
 			break;
 		case 5:
 			curBlock = blockType5;
-			mBlockImage.Destroy();
-			mBlockImage.Load(_T("res\\BlockZ.bmp"));
 			break;
 		case 6:
 			curBlock = blockType6;
-			mBlockImage.Destroy();
-			mBlockImage.Load(_T("res\\BlockS.bmp"));
 			break;
 		default:
 			break;
@@ -447,7 +465,6 @@ int CTetrisDoc::DropBlock(Block* curBlock, CDC* pDC)
 	// TODO: 여기에 구현 코드 추가.
 	if (CheckCollision(boardStatus, *curBlock, 0)) { //아래 충돌 검사
 		EmbedBlock(boardStatus, *curBlock, pDC);
-		CreateBlock(pDC);
 		return 1;
 	}
 	PaintBlock(*curBlock, pDC); //이전 블록 지우기
@@ -478,7 +495,6 @@ int CTetrisDoc::HardDropBlock(Block* curBlock, CDC* pDC)
 
 	PaintBlock(*curBlock, pDC); // 이전 블록 지우기
 	*curBlock = tempBlock;
-	PaintBlock(*curBlock, curBlock->blockColor, pDC); // 새로운 블록 그리기
 	EmbedBlock(boardStatus, *curBlock, pDC); // 없으면 내리고 회전가능함
 
 	return 0;
@@ -855,6 +871,7 @@ void CTetrisDoc::EmbedBlock(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block c
 	}
 	PaintBlock(curBlock, curBlock.blockColor, pDC); // 블록 그리기
 	EraseOneLine(pDC); //라인 지우기 검사 및 처리
+	CreateBlock(pDC);
 	mHoldFlag = 0; //홀드 초기화
 	return;
 }
@@ -872,9 +889,34 @@ void CTetrisDoc::HoldBlock(CDC* pDC)
 		int temp = holdBlock; //홀드 블록 임시 저장
 		holdBlock = curBlock.blockType;
 		CreateBlock(temp, pDC); //홀드 블록 생성
-		
 	}
 	mHoldFlag = 1; //홀드 사용 표시
+
+	mHoldBlockImage.Destroy();
+	switch (holdBlock) {
+	case 0:
+		mHoldBlockImage.Load(_T("res\\BlockI.bmp"));
+		break;
+	case 1:
+		mHoldBlockImage.Load(_T("res\\BlockO.bmp"));
+		break;
+	case 2:
+		mHoldBlockImage.Load(_T("res\\BlockT.bmp"));
+		break;
+	case 3:
+		mHoldBlockImage.Load(_T("res\\BlockJ.bmp"));
+		break;
+	case 4:
+		mHoldBlockImage.Load(_T("res\\BlockL.bmp"));
+		break;
+	case 5:
+		mHoldBlockImage.Load(_T("res\\BlockZ.bmp"));
+		break;
+	case 6:
+		mHoldBlockImage.Load(_T("res\\BlockS.bmp"));
+		break;
+	}
+
 }
 
 void CTetrisDoc::EraseOneLine(CDC* pDC)

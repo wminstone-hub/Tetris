@@ -74,18 +74,21 @@ void CTetrisView::OnDraw(CDC* pDC)
 		pDoc->DrawBoard(pDC);
 		pDoc->mScore = 0;
 		pDoc->mScoreStr.Empty();
+		pDC->TextOutW(660, 295, pDoc->TimerFormet(pDoc->mTimer));
 		pDoc->mScoreStr.Format(_T("%d"), pDoc->mScore);
-		pDC->TextOutW(80, 250, pDoc->mScoreStr);
+		pDC->TextOutW(80, 280, pDoc->mScoreStr);
 
 
 
 	}
 
 	if (pDoc->mGameStatus == 1) {
-		pDC->TextOutW(680, 125, pDoc->TimerFormet(pDoc->mTimer));
-		pDC->TextOutW(80, 250, pDoc->mScoreStr);
-		if (pDoc->mBlockImage.IsNull() != 1)
-			pDoc->mBlockImage.Draw(pDC->m_hDC, 30, 80); // 다음블록 이미지 출력
+		pDC->TextOutW(660, 295, pDoc->TimerFormet(pDoc->mTimer));
+		pDC->TextOutW(80, 280, pDoc->mScoreStr);
+		if (pDoc->mNextBlockImage.IsNull() != 1)
+			pDoc->mNextBlockImage.Draw(pDC->m_hDC, 14, 82); // 다음블럭 이미지 출력
+		if (pDoc->mHoldBlockImage.IsNull() != 1)
+			pDoc->mHoldBlockImage.Draw(pDC->m_hDC, 606, 82); // 홀드블럭 이미지 출력
 
 	}
 }
@@ -180,8 +183,9 @@ void CTetrisView::OnStartBtnClicked()
 	GetDlgItem(103)->EnableWindow(TRUE);
 
 	pDoc->mGameStatus = 1; //게임 시작 상태로 변경
-	pDoc -> mTimer = 0;
+
 	SetTimer(1, 1000, NULL); //1초 간격 타이머 시작
+
 	pDoc->DrawBoard(pDC);
 	pDoc->CreateBlock(pDC);
 }
@@ -216,6 +220,30 @@ void CTetrisView::OnResumeBtnClicked()
 void CTetrisView::OnRestartBtnClicked()
 {
 	// TODO: 여기에 구현 코드 추가.
+	GetDlgItem(105)->ShowWindow(SW_HIDE);
+	GetDlgItem(102)->ShowWindow(SW_HIDE);
+	GetDlgItem(105)->EnableWindow(FALSE);
+	GetDlgItem(102)->EnableWindow(FALSE);
+
+	CTetrisDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc)
+		return;
+	CDC* pDC = GetDC();
+
+	pDoc->InitBoardStatus();
+	pDoc->InitBlockBox(pDoc->blockBox);
+	pDoc->initGameStatus();
+
+	pDoc->mGameStatus = 0; // 타이틀로 상태변경
+	Invalidate(FALSE);
+	GetDlgItem(101)->ShowWindow(SW_SHOWNORMAL);
+	GetDlgItem(102)->ShowWindow(SW_SHOWNORMAL);
+	GetDlgItem(101)->EnableWindow(TRUE);
+	GetDlgItem(102)->EnableWindow(TRUE);
+
+	
+
 }
 
 void CTetrisView::OnTimer(UINT_PTR nIDEvent)
@@ -244,6 +272,10 @@ void CTetrisView::OnTimer(UINT_PTR nIDEvent)
 
 	case 3: //게임 오버
 		KillTimer(1);
+		GetDlgItem(105)->ShowWindow(SW_SHOWNORMAL);
+		GetDlgItem(102)->ShowWindow(SW_SHOWNORMAL);
+		GetDlgItem(105)->EnableWindow(TRUE);
+		GetDlgItem(102)->EnableWindow(TRUE);
 		break;
 
 	default:
