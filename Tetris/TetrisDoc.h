@@ -41,6 +41,8 @@ public:
 	CString mTimerStr;				// 게임진행시간 문자열
 	int mGameStatus = 0;             // 게임 상태 (타이틀: 0, 진행중: 1, 일시정지: 2, 게임오버: 3)
 
+	CImage mBlockImage;				//NEXT 블록 이미지를 저장할 CImage 객체
+
 	//미노 블록 랜덤 생성 관련 변수
 	std::vector<int> blockBox;
 	size_t curIdx;
@@ -51,11 +53,12 @@ public:
 
 	//보드 색상 정의
 	const COLORREF boardColor = 0x00f0f0f0; // 아이보리
-	const COLORREF ceilingColor = 0x0053d2ec; // 옅은노랑
+	const COLORREF ceilingColor = 0x00ccffff; // 옅은노랑
 	const COLORREF floorColor = 0x00808080; // 짙은회색
 
 	// 블록 색상 정의
-	const COLORREF blockColor0 = 0x00fce0d1; // 하늘색
+	//const COLORREF blockColor0 = 0x00fce0d1; // 하늘색
+	const COLORREF blockColor0 = 0x00ffcca0; // 하늘색
 	const COLORREF blockColor1 = 0x0000d0dd; // 노란색
 	const COLORREF blockColor2 = 0x00792646; // 보라색
 	const COLORREF blockColor3 = 0x00007fff; // 주황색

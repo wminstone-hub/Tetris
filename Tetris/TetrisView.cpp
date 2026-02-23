@@ -76,14 +76,16 @@ void CTetrisView::OnDraw(CDC* pDC)
 		pDoc->mScoreStr.Empty();
 		pDoc->mScoreStr.Format(_T("%d"), pDoc->mScore);
 		pDC->TextOutW(80, 250, pDoc->mScoreStr);
-		CImage image;
-		image.Load(_T("BlockS.bmp"));
-		image.Draw(pDC->m_hDC, 30, 80);
+
+
+
 	}
 
 	if (pDoc->mGameStatus == 1) {
 		pDC->TextOutW(680, 125, pDoc->TimerFormet(pDoc->mTimer));
 		pDC->TextOutW(80, 250, pDoc->mScoreStr);
+		if (pDoc->mBlockImage.IsNull() != 1)
+			pDoc->mBlockImage.Draw(pDC->m_hDC, 30, 80); // 다음블록 이미지 출력
 
 	}
 }

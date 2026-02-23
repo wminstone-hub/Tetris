@@ -345,24 +345,38 @@ void CTetrisDoc::CreateBlock(CDC* pDC)
 	switch (nextBlock()) {
 		case 0:
 			curBlock = blockType0;
+			mBlockImage.Destroy();
+			mBlockImage.Load(_T("BlockI.bmp"));
 			break;
 		case 1:
 			curBlock = blockType1;
+			mBlockImage.Destroy();
+			mBlockImage.Load(_T("BlockO.bmp"));
 			break;
 		case 2:
 			curBlock = blockType2;
+			mBlockImage.Destroy();
+			mBlockImage.Load(_T("BlockT.bmp"));
 			break;
 		case 3:
 			curBlock = blockType3;
+			mBlockImage.Destroy();
+			mBlockImage.Load(_T("BlockJ.bmp"));
 			break;
 		case 4:
 			curBlock = blockType4;
+			mBlockImage.Destroy();
+			mBlockImage.Load(_T("BlockL.bmp"));
 			break;
 		case 5:
 			curBlock = blockType5;
+			mBlockImage.Destroy();
+			mBlockImage.Load(_T("BlockZ.bmp"));
 			break;
 		case 6:
 			curBlock = blockType6;
+			mBlockImage.Destroy();
+			mBlockImage.Load(_T("BlockS.bmp"));
 			break;
 		default:
 			break;
