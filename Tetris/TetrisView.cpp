@@ -66,12 +66,13 @@ void CTetrisView::OnDraw(CDC* pDC)
 	CTetrisDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
-		return; 
+		return;
 	
-	pDoc->CreateUI(pDC);
-	pDoc->RenderBoard(pDC);
+	//pDoc->CreateUI(pDC);
+	//pDoc->RenderBoard(pDC);
 	
 	if (pDoc->mGameStatus == 0) {
+		pDoc->CreateUI(pDC);
 		pDoc->DrawBoard(pDC);
 		pDoc->mScore = 0;
 		pDoc->mScoreStr.Empty();
