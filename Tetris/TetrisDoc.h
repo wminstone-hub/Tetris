@@ -8,6 +8,8 @@
 #include <vector>
 #include <algorithm>
 #include <random>
+#include <map>
+
 
 //게임보드 상수
 #define BOARD_WIDTH 10
@@ -36,6 +38,7 @@ public:
 	int mScore;                 // 점수
 	int mLevel;                 // 현재 레벨
 	int mTimer = 0;					// 게임진행시간
+	CString mTimerStr;				// 게임진행시간 문자열
 	int mGameStatus = 0;             // 게임 상태 (타이틀: 0, 진행중: 1, 일시정지: 2, 게임오버: 3)
 
 	//미노 블록 랜덤 생성 관련 변수
@@ -69,20 +72,49 @@ public:
 	typedef struct {
 		char blockType; //블록 종류
 		Tile tile[4]; //블록을 구성하는 4개의 타일
+		char blockRotateState; //회전 상태
 		COLORREF blockColor;
 	}Block;
 
 	//7가지 블록 타입 정의
-	Block blockType0 = { 0, { { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 } }, blockColor0 }; //I형
-	Block blockType1 = { 1, { { 5, 0 }, { 6, 0 }, { 5, 1 }, { 6, 1 } }, blockColor1 }; //O형
-	Block blockType2 = { 2, { { 5, 0 }, { 4, 1 }, { 5, 1 }, { 6, 1 } }, blockColor2 }; //T형
-	Block blockType3 = { 3, { { 5, 0 }, { 5, 1 }, { 6, 1 }, { 7, 1 } }, blockColor3 }; //J형
-	Block blockType4 = { 4, { { 6, 0 }, { 4, 1 }, { 5, 1 }, { 6, 1 } }, blockColor4 }; //L형
-	Block blockType5 = { 5, { { 5, 0 }, { 6, 0 }, { 6, 1 }, { 7, 1 } }, blockColor5 }; //Z형
-	Block blockType6 = { 6, { { 5, 0 }, { 6, 0 }, { 5, 1 }, { 4, 1 } }, blockColor6 }; //S형
+	Block blockType0 = { 0, { { 4, 0 }, { 5, 0 }, { 6, 0 }, { 7, 0 } }, '0', blockColor0 }; //I형
+	Block blockType1 = { 1, { { 5, 0 }, { 6, 0 }, { 5, 1 }, { 6, 1 } }, '0', blockColor1 }; //O형
+	Block blockType2 = { 2, { { 5, 0 }, { 4, 1 }, { 5, 1 }, { 6, 1 } }, '0', blockColor2 }; //T형
+	Block blockType3 = { 3, { { 5, 0 }, { 5, 1 }, { 6, 1 }, { 7, 1 } }, '0', blockColor3 }; //J형
+	Block blockType4 = { 4, { { 6, 0 }, { 4, 1 }, { 5, 1 }, { 6, 1 } }, '0', blockColor4 }; //L형
+	Block blockType5 = { 5, { { 5, 0 }, { 6, 0 }, { 6, 1 }, { 7, 1 } }, '0', blockColor5 }; //Z형
+	Block blockType6 = { 6, { { 5, 0 }, { 6, 0 }, { 4, 1 }, { 5, 1 } }, '0', blockColor6 }; //S형
+
+	//월킥 오프셋 구조체 정의
+	struct WallKickOffset {
+		int x;
+		int y;
+	};
+
+	// I형 블록 Wall Kick 데이터
+	std::map<char, std::vector<WallKickOffset>> wallKickData_I = {
+		{'R', {{0, 0}, {-2, 0}, {+1, 0}, {-2, -1}, {+1, +2}}},  // 0->R
+		{'2', {{0, 0}, {-1, 0}, {+2, 0}, {-1, +2}, {+2, -1}}},  // R->2
+		{'L', {{0, 0}, {+2, 0}, {-1, 0}, {+2, +1}, {-1, -2}}},  // 2->L
+		{'0', {{0, 0}, {+1, 0}, {-2, 0}, {+1, -2}, {-2, +1}}}   // L->0
+	};
+
+	// J, L, S, T, Z 블록 Wall Kick 데이터
+	std::map<char, std::vector<WallKickOffset>> wallKickData_JLSTZ = {
+		{'R', {{0, 0}, {-1, 0}, {-1, +1}, {0, -2}, {-1, -2}}},  // 0->R
+		{'2', {{0, 0}, {+1, 0}, {+1, -1}, {0, +2}, {+1, +2}}},  // R->2
+		{'L', {{0, 0}, {+1, 0}, {+1, +1}, {0, -2}, {+1, -2}}},  // 2->L
+		{'0', {{0, 0}, {-1, 0}, {-1, -1}, {0, +2}, {-1, +2}}}   // L->0
+	};
+
+
 
 	//현재 블럭
 	Block curBlock;
+
+	//임시블럭
+	Block bufferBlock;
+
 	//홀드 블럭
 	int holdBlock = -1;
 		
@@ -120,8 +152,10 @@ public:
 	//초기화 함수들
 	void InitBoardStatus();
 	void InitBlockBox(std::vector<int>& blockBox);
+	void initGameStatus();
 	//게임 상태 관련 함수들
 	int IsGameOvered(CDC* pDC);
+	CString TimerFormet(int m_Timer);
 	//랜덤 블록 생성 함수 (7-bag)
 	void shuffleBox();
 	int nextBlock();
@@ -136,10 +170,11 @@ public:
 	void CTetrisDoc::CreateBlock(int blockType, CDC* pDC);
 	int DropBlock(Block* curBlock, CDC* pDC);
 	int MoveBlockDirectionX(Block* curBlock, int direction, CDC* pDC);
-	int CheckCollision(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, int direction);
+	int CheckCollision(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, int mod);
 	void EmbedBlock(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, CDC* pDC);
 	void EraseOneLine(CDC* pDC);
 	void RenderBoard(CDC* pDC);
+	int RotateBlock(Block* curBlock, CDC* pDC);
+	int CheckWallKick(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, Block* bufferBlock);
 	void HoldBlock(CDC* pDC);
-	void initGameStatus();
 };

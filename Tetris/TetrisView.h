@@ -21,7 +21,7 @@ public:
 	CButton mResumeBtn;
 	CButton mRestartBtn;
 
-	CString mTimerStr;
+
 
 // 작업입니다.
 public:

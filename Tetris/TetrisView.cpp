@@ -74,8 +74,9 @@ void CTetrisView::OnDraw(CDC* pDC)
 	}
 
 	if (pDoc->mGameStatus == 1) {
-		mTimerStr.Format(_T("%d"), pDoc->mTimer);
-		pDC->TextOutW(680, 125, mTimerStr);
+		//pDoc->mTimerStr.Format(_T("%d"), pDoc->mTimer);
+		
+		pDC->TextOutW(680, 125, pDoc->TimerFormet(pDoc->mTimer));
 	}
 }
 
@@ -218,13 +219,25 @@ void CTetrisView::OnTimer(UINT_PTR nIDEvent)
 
 	CDC* pDC = GetDC();
 
-	if (pDoc->mGameStatus == 1) {
+	switch (pDoc->mGameStatus) {
+	case 0: //타이틀 화면
+		break;
+
+	case 1: //게임 진행중
 		pDoc->mTimer += 1;
 		pDoc->DropBlock(&pDoc->curBlock, pDC);
 		Invalidate(FALSE);
-	}
-	else {
+		break;
+
+	case 2: //일시정지
+		break;
+
+	case 3: //게임 오버
 		KillTimer(1);
+		break;
+
+	default:
+		break;
 	}
 
 	CView::OnTimer(nIDEvent);
@@ -241,6 +254,10 @@ void CTetrisView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	if (pDoc->mGameStatus == 1) {
 
+		if (nChar == VK_UP) {
+			pDoc->RotateBlock(&pDoc->curBlock, pDC);
+			Invalidate(FALSE);
+		}
 		if (nChar == VK_DOWN) {
 			pDoc->DropBlock(&pDoc->curBlock, pDC);
 			Invalidate(FALSE);
