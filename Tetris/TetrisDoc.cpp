@@ -199,6 +199,17 @@ int CTetrisDoc::IsGameOvered(CDC* pDC)
 	return 0;
 }
 
+// 분:초 형식 변환 함수
+CString CTetrisDoc::TimerFormet(int m_Timer)
+{
+	// TODO: 여기에 구현 코드 추가.
+	CString mMin, mSec;			// 변환된 분,초
+	mMin.Format(_T("%02d"), m_Timer / 60);
+	mSec.Format(_T("%02d"), m_Timer % 60);
+
+	return mMin + _T(" : ") + mSec;
+}
+
 //////////////////////////////////////////////랜덤 블록 생성 함수 (7-bag)
 
 void CTetrisDoc::shuffleBox()
@@ -356,6 +367,100 @@ void CTetrisDoc::PaintBlock(Block block, CDC* pDC)
 	}
 }
 
+void CTetrisDoc::RenderBoard(CDC* pDC)
+{
+	// TODO: 여기에 구현 코드 추가.
+	
+	//한 칸 그리기 펜
+	CPen squarePen(PS_SOLID, 1, RGB(0, 0, 0));
+	CPen* pOldPen = pDC->SelectObject(&squarePen);
+
+	//게임 보드 생성
+	int rectStartX = BOARD_WIDTH_OFFSET;
+	int rectStartY = BOARD_HIEGHT_OFFSET;
+	int rectEndX = BOARD_WIDTH_OFFSET + BLOCK_SIZE;
+	int rectEndY = BLOCK_SIZE;
+
+	//보드 색상 브러시
+	CBrush boardBrush(boardColor);
+	CBrush ceilingBrush(ceilingColor);
+	CBrush floorBrush(floorColor);
+	CBrush blockBrush0(blockColor0);
+	CBrush blockBrush1(blockColor1);
+	CBrush blockBrush2(blockColor2);
+	CBrush blockBrush3(blockColor3);
+	CBrush blockBrush4(blockColor4);
+	CBrush blockBrush5(blockColor5);
+	CBrush blockBrush6(blockColor6);
+	CBrush* pOldBrush = pDC->SelectObject(&boardBrush);
+	
+	//보드 그리기
+	for (int curHeight = 0; curHeight < BOARD_HEIGHT + CEILING_HEIGHT + FLOOR_HEIGHT; curHeight++) {
+		for (int curWidth = 1; curWidth < BOARD_WIDTH + WALL_WIDTH - 1; curWidth++) {
+			if (curHeight == 0 || curHeight == 1) {
+				pDC->SelectObject(&ceilingBrush);
+			}
+			else if (curHeight == BOARD_HEIGHT + CEILING_HEIGHT) {
+				pDC->SelectObject(&floorBrush);
+			}
+			else {
+				switch (boardStatus[curHeight][curWidth]) {
+					case 0:
+						pDC->SelectObject(&boardBrush);
+						break;
+					case 1:
+						pDC->SelectObject(&blockBrush0);
+						break;
+					case 2:
+						pDC->SelectObject(&blockBrush1);
+						break;
+					case 3:
+						pDC->SelectObject(&blockBrush2);
+						break;
+					case 4:
+						pDC->SelectObject(&blockBrush3);
+						break;
+					case 5:
+						pDC->SelectObject(&blockBrush4);
+						break;
+					case 6:
+						pDC->SelectObject(&blockBrush5);
+						break;
+					case 7:
+						pDC->SelectObject(&blockBrush6);
+						break;
+				}
+			}
+			pDC->Rectangle(rectStartX, rectStartY, rectEndX, rectEndY);
+			rectStartX += BLOCK_SIZE;
+			rectEndX += BLOCK_SIZE;
+		}
+		rectStartX = BOARD_WIDTH_OFFSET;
+		rectEndX = BOARD_WIDTH_OFFSET + BLOCK_SIZE;
+		rectStartY += BLOCK_SIZE;
+		rectEndY += BLOCK_SIZE;
+	}
+
+	PaintBlock(curBlock, curBlock.blockColor, pDC); //현재 블록 그리기
+
+	//펜, 브러시 원상복구
+	pDC->SelectObject(pOldPen);
+	DeleteObject(&squarePen);
+
+	pDC->SelectObject(pOldBrush);
+	DeleteObject(&boardBrush);
+	DeleteObject(&floorBrush);
+	DeleteObject(&ceilingBrush);
+	DeleteObject(&blockBrush0);
+	DeleteObject(&blockBrush1);
+	DeleteObject(&blockBrush2);
+	DeleteObject(&blockBrush3);
+	DeleteObject(&blockBrush4);
+	DeleteObject(&blockBrush5);
+	DeleteObject(&blockBrush6);
+	return;
+}
+
 //////////////////////////////////////////////블록 동작 관련 함수들
 
 void CTetrisDoc::CreateBlock(CDC* pDC)
@@ -500,8 +605,6 @@ int CTetrisDoc::HardDropBlock(Block* curBlock, CDC* pDC)
 	return 0;
 }
 
-
-
 int CTetrisDoc::MoveBlockDirectionX(Block* curBlock, int direction, CDC* pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
@@ -545,8 +648,6 @@ int CTetrisDoc::RotateBlock(Block* curBlock, CDC* pDC)
 		return -1; //오류
 	}
 }
-
-
 
 // 충돌 검사 함수 (mod == 0 : 아래, mod == 1 : 왼쪽, mod == 2 : 오른쪽, mod == 3 : 회전, mod == 4 : 단순)
 int CTetrisDoc::CheckCollision(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, int mod)
@@ -860,9 +961,6 @@ int CTetrisDoc::CheckWallKick(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block
 	}
 }
 
-
-
-
 void CTetrisDoc::EmbedBlock(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, CDC* pDC)
 {
 	// TODO: 여기에 구현 코드 추가.
@@ -1004,25 +1102,5 @@ void CTetrisDoc::EraseOneLine(CDC* pDC)
 			mScoreStr.Format(_T("%d"), mScore);
 		}
 	}
-}
-
-
-
-
-void CTetrisDoc::RenderBoard(CDC* pDC)
-{
-	// TODO: 여기에 구현 코드 추가.
-
-}
-// 분:초 형식 변환 함수
-CString CTetrisDoc::TimerFormet(int m_Timer)
-{
-	// TODO: 여기에 구현 코드 추가.
-	CString mMin, mSec;			// 변환된 분,초
-	mMin.Format(_T("%02d"), m_Timer / 60);
-	mSec.Format(_T("%02d"), m_Timer % 60);
-
-
-	return mMin + _T(" : ") + mSec;
 }
 

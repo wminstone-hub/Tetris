@@ -170,6 +170,7 @@ public:
 	void PaintTile(Tile tile, COLORREF color, CDC* pDC);
 	void PaintBlock(Block block, COLORREF blockColor, CDC* pDC);
 	void PaintBlock(Block block, CDC* pDC);
+	void RenderBoard(CDC* pDC);
 	//블록 동작 관련 함수들
 	void CreateBlock(CDC* pDC);
 	void CTetrisDoc::CreateBlock(int blockType, CDC* pDC);
@@ -178,7 +179,6 @@ public:
 	int CheckCollision(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, int mod);
 	void EmbedBlock(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, CDC* pDC);
 	void EraseOneLine(CDC* pDC);
-	void RenderBoard(CDC* pDC);
 	int RotateBlock(Block* curBlock, CDC* pDC);
 	int CheckWallKick(int boardStatus[][BOARD_WIDTH + WALL_WIDTH], Block curBlock, Block* bufferBlock);
 	int HardDropBlock(Block* curBlock, CDC* pDC);

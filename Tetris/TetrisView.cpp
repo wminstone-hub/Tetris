@@ -59,9 +59,8 @@ BOOL CTetrisView::PreCreateWindow(CREATESTRUCT& cs)
 	return CView::PreCreateWindow(cs);
 }
 
-
 // CTetrisView 그리기
- 
+
 void CTetrisView::OnDraw(CDC* pDC)
 {
 	CTetrisDoc* pDoc = GetDocument();
@@ -69,17 +68,16 @@ void CTetrisView::OnDraw(CDC* pDC)
 	if (!pDoc)
 		return; 
 	
+	pDoc->CreateUI(pDC);
+	pDoc->RenderBoard(pDC);
+	
 	if (pDoc->mGameStatus == 0) {
-		pDoc->CreateUI(pDC);
 		pDoc->DrawBoard(pDC);
 		pDoc->mScore = 0;
 		pDoc->mScoreStr.Empty();
 		pDC->TextOutW(660, 295, pDoc->TimerFormet(pDoc->mTimer));
 		pDoc->mScoreStr.Format(_T("%d"), pDoc->mScore);
 		pDC->TextOutW(80, 280, pDoc->mScoreStr);
-
-
-
 	}
 
 	if (pDoc->mGameStatus == 1) {
@@ -89,7 +87,6 @@ void CTetrisView::OnDraw(CDC* pDC)
 			pDoc->mNextBlockImage.Draw(pDC->m_hDC, 14, 82); // 다음블럭 이미지 출력
 		if (pDoc->mHoldBlockImage.IsNull() != 1)
 			pDoc->mHoldBlockImage.Draw(pDC->m_hDC, 606, 82); // 홀드블럭 이미지 출력
-
 	}
 }
 
@@ -229,6 +226,11 @@ void CTetrisView::OnResumeBtnClicked()
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
+
+	CDC* pDC = GetDC();
+
+	pDoc->RenderBoard(pDC);
+
 	pDoc->mGameStatus = 1; //게임 진행 상태로 변경
 
 }
@@ -248,7 +250,7 @@ void CTetrisView::OnRestartBtnClicked()
 	CDC* pDC = GetDC();
 
 	pDoc->InitBoardStatus();
-	pDoc->InitBlockBox(pDoc->blockBox);
+	pDoc->shuffleBox();
 	pDoc->initGameStatus();
 
 	pDoc->mGameStatus = 0; // 타이틀로 상태변경
